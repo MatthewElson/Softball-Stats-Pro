@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { firestore } from "./firebase"
 
 
 
@@ -12,6 +13,10 @@ const LoginPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        firestore.collection("teams").where("name", "==", teamName)
+
+        navigate('/menu');
     }
 
     return (

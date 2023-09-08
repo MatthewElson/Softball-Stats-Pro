@@ -51,7 +51,7 @@ button {
   margin-top: 10px;
 }
 
-.menu-buttons {
+.menu .menu-buttons {
   display: flex;
   flex-direction: column;
   width: 80%;
@@ -59,7 +59,7 @@ button {
   gap: 20px;
 }
 
-.link-button {
+.menu .menu-buttons .link-button {
   text-decoration: none;
   color: black;
   text-align: center;
@@ -69,12 +69,84 @@ button {
   border-radius: 5px;
 }
 
-.link-button:active {
+.menu .menu-buttons .link-button:active {
   color: black;
 }
 
 .new-game h2 {
   font-weight: 700;
   font-size: x-large;
-  margin: 0;
+  margin: 1rem 0;
+}
+
+.new-game .players-list {
+  font-size: larger;
+}
+
+.new-game .offense-boxes {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.new-game .offense-boxes .box {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 48%;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+.new-game .offense-boxes .box .upperbox{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  font-size: medium;
+  padding: 5px;
+  border-bottom: 1px solid black;
+}
+
+.new-game .offense-boxes .box .lowerbox{
+  font-size: small;
+  padding: 5px;
+  min-height: 3em;
+}
+
+.new-game .offense-good-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.new-game .offense-good-buttons button {
+  color: white;
+  text-align: center;
+  border: 1px solid black;
+  background-color: green;
+  padding: 0.25em 0;
+  border-radius: 5px;
+  width: 8.5em;
+}
+
+.new-game .offense-bad-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.new-game .offense-bad-buttons button {
+  color: white;
+  text-align: center;
+  border: 1px solid black;
+  background-color: red;
+  padding: 0.25em 0;
+  border-radius: 5px;
+  width: 100%;
 }
