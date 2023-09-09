@@ -7,44 +7,80 @@ const NewGame = () => {
         "Alonso",
         "Guerra",
         "Miguel",
+        "Rogelio",
+        "Manuel",
+        "José",
+        "Marcelo",
+        "Eugenio",
+        "Wicho",
         "Rogelio"
     ])
 
+    const [tempPlayers, setTempPlayers] = useState(players);
+
     const [gameStats, setGameStats] = useState([
-        ["Single", "Strikeout", "Double", "Triple"],
-        ["Single", "Strikeout", "Double", "Triple"],
-        ["Single", "Strikeout", "Double", "Triple"],
-        ["Single", "Strikeout", "Double", "Triple"]
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
     ])
 
     const [rbis, setRbis] = useState([
         0,
         0,
         0,
-        0
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
     ])
 
     const [sbs, setSbs] = useState([
         0,
         0,
         0,
-        0
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
     ])
 
     const [average, setAverage] = useState([
         [0, 0],
         [0, 0],
         [0, 0],
-        [0, 0]
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
     ])
 
     const [selectedPlayerIdx, setSelectedPlayerIdx] = useState(0);
+
+    const [toggle, setToggle] = useState(false);
+
+    const [formToggle, setFormToggle] = useState(false);
 
     const goodButtons = ["Single", "Double", "Triple", "Homerun", "Walk"]
     const badButtons = ["Out", "Strikeout"];
 
     const handleRadioChange = (e) => {
-        setSelectedPlayerIdx(e.target.value);
+        setSelectedPlayerIdx(Number(e.target.value));
     }
 
     const handleClick = (e) => {
@@ -87,60 +123,106 @@ const NewGame = () => {
             }
             setSbs(copiedSbs);
         }
+
+        if (toggle) {
+            if (selectedPlayerIdx !== players.length - 1){
+                setSelectedPlayerIdx(prev => prev + 1);
+            } else {
+                setSelectedPlayerIdx(0);
+            }
+        }
     }
 
+    const handleToggle = () => {
+        setToggle((prev) => !prev);
+    }
+
+    const handleFormToggle = () => {
+        setFormToggle((prev) => !prev);
+    }
+
+    const handleChange = (e, idx) => {
+        const copyTempPlayers = [...tempPlayers];
+        copyTempPlayers[idx] = e.target.value;
+        setTempPlayers(copyTempPlayers);
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        setFormToggle((prev) => !prev);
+        setPlayers(tempPlayers);
+    }
 
     return (
-        <section className="new-game">
-            <h1>Gavilanes</h1>
-            <h2>Current Team Players: </h2>
-            <p className="players-list">
-                {Gavilanes.players.map((player) => {
-                    return player.name;
-                }).join(", ")}
-            </p>
-            <h2>Offense:</h2>
-            <section className="offense-boxes">
-                {players.map((player, idx) => (
-                    <div className={`box ${player === players[selectedPlayerIdx] ? "selected" : ""}`} key={player}>
-                        <label htmlFor={player}>
-                            <div className="upperbox">
-                                <div className="player-name">{player}</div>
-                                <div className="player-average">{average[idx][0]}/{average[idx][1]}</div>
-                                <div className="player-sbs">{sbs[idx]} SB's</div>
-                                <div className="player-rbis">{rbis[idx]} RBI's</div>
-                            </div>
-                            <div className="lowerbox">
-                                <div>{gameStats[idx].join(", ")}</div>
-                            </div>
-                        </label>
+        <>
+            {formToggle && (
+                <section className="new-game-form">
+                    <form className="players-form" onSubmit={handleSubmit}>
+                        <h1>Edit Players</h1>
+                        {tempPlayers.map((player, idx) => (
+                            <input key={idx} type="text" id={player} value={player} onChange={(e) => handleChange(e, idx)} />
+                        ))}
+                        <button type="submit" className="players-form-button">Confirm Changes</button>
+                    </form>
+                </section>
+            )}
+            <section className={`new-game ${formToggle ? "blurred" : ""}`}>
+                <h1>Gavilanes</h1>
+                <h2>Current Team Players: </h2>
+                <p className="players-list">
+                    {Gavilanes.players.map((player) => {
+                        return player.name;
+                    }).join(", ")}
+                </p>
+                <section className="offense-heading">
+                    <h2>Offense:</h2>
+                    <div>
+                        <button className="toggle" onClick={handleToggle}>{toggle ? "Auto" : "Manual"}</button>
+                        <button onClick={handleFormToggle}>Change Players</button>
                     </div>
-                ))}
+                </section>
+                <section className="offense-boxes">
+                    {players.map((player, idx) => (
+                        <div className={`box ${player === players[selectedPlayerIdx] ? "selected" : ""}`} key={idx}>
+                            <label htmlFor={player}>
+                                <div className="upperbox">
+                                    <div className="player-name">{player}</div>
+                                    <div className="player-average">{average[idx][0]}/{average[idx][1]}</div>
+                                    <div className="player-sbs">{sbs[idx]} SB's</div>
+                                    <div className="player-rbis">{rbis[idx]} RBI's</div>
+                                </div>
+                                <div className="lowerbox">
+                                    <div>{gameStats[idx].join(", ")}</div>
+                                </div>
+                            </label>
+                        </div>
+                    ))}
+                </section>
+                <section className="offense-good-buttons">
+                    {goodButtons.map((btn) => (
+                        <button key={btn} value={btn} onClick={handleClick}>{btn}</button>
+                    ))}
+                </section>
+                <section className="offense-sbs-buttons">
+                    <button key="SB+" value="SB+" onClick={handleClick}>SB+</button>
+                    <button key="SB-" value="SB-" onClick={handleClick}>SB-</button>
+                </section>
+                <section className="offense-rbis-buttons">
+                    <button value="RBI+" onClick={handleClick}>RBI+</button>
+                    <button value="RBI-" onClick={handleClick}>RBI-</button>
+                </section>
+                <section className="offense-bad-buttons">
+                    {badButtons.map((btn) => (
+                        <button key={btn} value={btn} onClick={handleClick}>{btn}</button>
+                    ))}
+                </section>
+                <section className="offense-player-selector">
+                    {players.map((player, idx) => (
+                        <input key={idx} id={player} type="radio" name="selector" value={idx} checked={player === players[selectedPlayerIdx]} onChange={handleRadioChange} />
+                    ))}
+                </section>
             </section>
-            <section className="offense-good-buttons">
-                {goodButtons.map((btn) => (
-                    <button key={btn} value={btn} onClick={handleClick}>{btn}</button>
-                ))}
-            </section>
-            <section className="offense-sbs-buttons">
-                <button key="SB+" value="SB+" onClick={handleClick}>SB+</button>
-                <button key="SB-" value="SB-" onClick={handleClick}>SB-</button>
-            </section>
-            <section className="offense-rbis-buttons">
-                <button value="RBI+" onClick={handleClick}>RBI+</button>
-                <button value="RBI-" onClick={handleClick}>RBI-</button>
-            </section>
-            <section className="offense-bad-buttons">
-                {badButtons.map((btn) => (
-                    <button key={btn} value={btn} onClick={handleClick}>{btn}</button>
-                ))}
-            </section>
-            <section className="offense-player-selector">
-                {players.map((player, idx) => (
-                    <input key={player} id={player} type="radio" name="selector" value={idx} checked={player === players[selectedPlayerIdx]} onChange={handleRadioChange} />
-                ))}
-            </section>
-        </section>
+        </>
     );
 };
 

@@ -15,7 +15,7 @@ button {
   font-weight: 500;
 }
 
-.login, .menu, .new-game {
+.login, .menu {
   height: 100vh;
   background-color: #94A684;
   padding: 0 15px;
@@ -73,10 +73,86 @@ button {
   color: black;
 }
 
+.new-game {
+  background-color: #94A684;
+  padding: 0 15px 15px 15px;
+}
+
+.new-game-form {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.new-game-form .players-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background-color: #94A684;
+  padding: 4em;
+  border-radius: 10px;
+}
+
+.new-game-form .players-form h1{
+  text-align: center;
+  margin: 0;
+}
+
+.new-game-form .players-form input {
+  border-radius: 5px;
+  border: 1px solid black;
+  padding: 4px 5px;
+}
+
+.new-game-form .players-form-button {
+  color: white;
+  text-align: center;
+  border: none;
+  background-color: black;
+  padding: 0.3em 0.7em;
+  border-radius: 5px;
+}
+
 .new-game h2 {
   font-weight: 700;
   font-size: x-large;
   margin: 1rem 0;
+}
+
+.new-game.blurred {
+  filter: blur(3px);
+  pointer-events: none;
+}
+
+.new-game .offense-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.new-game .offense-heading div {
+  display: flex;
+  gap: 10px;
+}
+
+.new-game .offense-heading div button {
+  color: white;
+  text-align: center;
+  border: none;
+  background-color: black;
+  padding: 0.3em 0.7em;
+  border-radius: 5px;
+}
+
+.new-game .offense-heading .toggle {
+  width: 5em;
 }
 
 .new-game .players-list {
