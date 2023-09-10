@@ -301,3 +301,25 @@ button {
 .new-game .offense-player-selector {
   display: none;
 }
+
+.new-game .form-submit-stats {
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+  width: 80%;
+  margin: 0 auto;
+  gap: 10px;
+}
+
+.new-game .form-submit-stats input {
+  height: 1.5rem;
+  border-radius: 5px;
+}
+
+.new-game .form-submit-stats button {
+  background-color: #FFF;
+  font-size: 1em;
+  padding: 0.25em 0;
+  border-radius: 5px;
+  margin: 10px 0px;
+}

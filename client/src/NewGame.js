@@ -156,7 +156,7 @@ const NewGame = () => {
         }
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmitForm = (e) => {
         e.preventDefault();
         setFormToggle((prev) => !prev);
         setPlayers(tempPlayers);
@@ -168,11 +168,23 @@ const NewGame = () => {
         setLayout(prev => !prev)
     }
 
+    const [secret, setSecret] = useState("");
+    
+    const handleSubmitStats = (e) => {
+        e.preventDefault();
+        if (Gavilanes.secret === secret){
+            alert("Stats have been successfully submited!");
+        }
+        else {
+            alert("Wrong team password!")
+        }
+    }
+
     return (
         <>
             {formToggle && (
                 <section className="new-game-form">
-                    <form className="players-form" onSubmit={handleSubmit}>
+                    <form className="players-form" onSubmit={handleSubmitForm}>
                         <h1>Edit Players</h1>
                         {tempPlayers.map((player, idx) => (
                             <input key={idx} type="text" id={player} value={player} onChange={(e) => handleChange(e, idx)} />
@@ -189,6 +201,12 @@ const NewGame = () => {
                         return player.name;
                     }).join(", ")}
                 </p>
+                <h2>Publish Stats</h2>
+                <form className="form-submit-stats" onSubmit={handleSubmitStats}>
+                    <label htmlFor="secret">Team Password</label>
+                    <input id="secret" type="password" name="secret" value={secret} onChange={(e) => setSecret(e.target.value)} required/>
+                    <button type="submit">Submit Stats</button>
+                </form>
                 <section className="offense-heading">
                     <h2>Offense:</h2>
                     <div>
