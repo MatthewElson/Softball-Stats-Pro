@@ -76,6 +76,7 @@ button {
 .new-game {
   background-color: #94A684;
   padding: 0 15px 15px 15px;
+  min-height: 100vh;
 }
 
 .new-game-form {
@@ -96,8 +97,9 @@ button {
   flex-direction: column;
   gap: 15px;
   background-color: #94A684;
-  padding: 4em;
+  padding: 4em 5em;
   border-radius: 10px;
+  border: 1px solid black;
 }
 
 .new-game-form .players-form h1{
@@ -151,6 +153,11 @@ button {
   border-radius: 5px;
 }
 
+.new-game .offense-heading .layout {
+  padding: 0.3em 0;
+  width: 2em;
+}
+
 .new-game .offense-heading .toggle {
   width: 5em;
 }
@@ -182,6 +189,10 @@ button {
   background-color: white;
 }
 
+.new-game .offense-boxes .box.two-box {
+  width: 48%;
+}
+
 .new-game .offense-boxes .selected {
   box-shadow: 0px 0px 10px 2px black;
 }
@@ -202,6 +213,11 @@ button {
 
 .new-game .offense-boxes .box .upperbox .player-average{
   width: 15%;
+  text-align: center;
+}
+
+.new-game .offense-boxes .box.two-box .upperbox .player-average{
+  width: 25%;
   text-align: center;
 }
 

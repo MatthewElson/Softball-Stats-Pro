@@ -13,7 +13,7 @@ const NewGame = () => {
         "Marcelo",
         "Eugenio",
         "Wicho",
-        "Rogelio"
+        "Mauricio"
     ])
 
     const [tempPlayers, setTempPlayers] = useState(players);
@@ -102,6 +102,14 @@ const NewGame = () => {
     
                 setAverage(copiedAverage);
             }
+
+            if (toggle) {
+                if (selectedPlayerIdx !== players.length - 1){
+                    setSelectedPlayerIdx(prev => prev + 1);
+                } else {
+                    setSelectedPlayerIdx(0);
+                }
+            }
         }
 
         else if (stat === "RBI+" || (stat === "RBI-" && rbis[selectedPlayerIdx] > 0)){
@@ -123,14 +131,6 @@ const NewGame = () => {
             }
             setSbs(copiedSbs);
         }
-
-        if (toggle) {
-            if (selectedPlayerIdx !== players.length - 1){
-                setSelectedPlayerIdx(prev => prev + 1);
-            } else {
-                setSelectedPlayerIdx(0);
-            }
-        }
     }
 
     const handleToggle = () => {
@@ -143,14 +143,29 @@ const NewGame = () => {
 
     const handleChange = (e, idx) => {
         const copyTempPlayers = [...tempPlayers];
-        copyTempPlayers[idx] = e.target.value;
-        setTempPlayers(copyTempPlayers);
+        let changeValue = true;
+        for (let i = 0; i < copyTempPlayers.length; i++){
+            if (copyTempPlayers[i] === e.target.value) {
+                changeValue = false;
+                break;
+              }
+        }
+        if (changeValue){
+            copyTempPlayers[idx] = e.target.value;
+            setTempPlayers(copyTempPlayers);
+        }
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
         setFormToggle((prev) => !prev);
         setPlayers(tempPlayers);
+    }
+
+    const [layout, setLayout] = useState(false)
+
+    const handleLayout = () => {
+        setLayout(prev => !prev)
     }
 
     return (
@@ -177,19 +192,20 @@ const NewGame = () => {
                 <section className="offense-heading">
                     <h2>Offense:</h2>
                     <div>
+                        <button className="layout" onClick={handleLayout}>{layout ? "2" : "1"}</button>
                         <button className="toggle" onClick={handleToggle}>{toggle ? "Auto" : "Manual"}</button>
                         <button onClick={handleFormToggle}>Change Players</button>
                     </div>
                 </section>
                 <section className="offense-boxes">
                     {players.map((player, idx) => (
-                        <div className={`box ${player === players[selectedPlayerIdx] ? "selected" : ""}`} key={idx}>
+                        <div className={`box ${layout ? "two-box" : ""} ${player === players[selectedPlayerIdx] ? "selected" : ""}`} key={idx}>
                             <label htmlFor={player}>
                                 <div className="upperbox">
-                                    <div className="player-name">{player}</div>
+                                    <div className="player-name">{layout ? player.substring(0,4) + "." : player}</div>
                                     <div className="player-average">{average[idx][0]}/{average[idx][1]}</div>
-                                    <div className="player-sbs">{sbs[idx]} SB's</div>
-                                    <div className="player-rbis">{rbis[idx]} RBI's</div>
+                                    <div className="player-sbs">{sbs[idx]} {layout ? "" : "SB's"}</div>
+                                    <div className="player-rbis">{rbis[idx]} {layout ? "" : "RBI's"}</div>
                                 </div>
                                 <div className="lowerbox">
                                     <div>{gameStats[idx].join(", ")}</div>
