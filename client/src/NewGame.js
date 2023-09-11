@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { teams } from './DummyData';
 import { Link, useParams } from "react-router-dom";
-// import { db } from "./firebase";
-// import { addDoc, collection} from "firebase/firestore";
+import { db } from "./firebase";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 
 const NewGame = () => {
 
     const { teamName } = useParams();
-    const [players, setPlayers] = useState(["Alonso", "Guerra", "Miguel", "Rogelio", "Manuel", "José", "Marcelo", "Eugenio", "Wicho", "Mauricio"])
+    const [players, setPlayers] = useState(["Player1", "Player2", "Player3", "Player4", "Player5", "Player6", "Player7", "Player8", "Player9", "Player10"])
     const [tempPlayers, setTempPlayers] = useState(players);
     const [gameStats, setGameStats] = useState([[], [], [], [], [], [], [], [], [], []]);
     const [rbis, setRbis] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
@@ -20,6 +20,19 @@ const NewGame = () => {
     const [secret, setSecret] = useState("");
     const goodButtons = ["Single", "Double", "Triple", "Homerun", "Walk"]
     const badButtons = ["Out", "Strikeout"];
+    const [data, setData] = useState({});
+    const [loading, setLoading] = useState(true);
+
+    const myFunction = async () => {
+        const docRef = doc(db, "teams", teamName);
+        const docSnap = await getDoc(docRef);
+        setData(docSnap.data());
+        setLoading(false);
+    }
+
+    useEffect(() => {
+        myFunction();
+    });
 
     const handleRadioChange = (e) => {
         setSelectedPlayerIdx(Number(e.target.value));
@@ -110,22 +123,26 @@ const NewGame = () => {
     
     const handleSubmitStats = async (e) => {
         e.preventDefault();
-        if (teams[0].secret === secret){
+        if (data.secret === secret){
             alert("Stats have been successfully submited!");
         }
         else {
             alert("Wrong team password!")
         }
+
+        
     }
 
     return (
         <>
+        {loading ? (<h1>Loading Stats...</h1>) : (
+                <>
             {formToggle && (
                 <section className="new-game-form">
                     <form className="players-form" onSubmit={handleSubmitForm}>
                         <h1>Edit Players</h1>
                         {tempPlayers.map((player, idx) => (
-                            <input key={idx} type="text" id={player} value={player} onChange={(e) => handleChange(e, idx)} />
+                            <input key={idx} type="text" id={player} value={player} placeholder={`Player ${idx + 1}`} onChange={(e) => handleChange(e, idx)} />
                         ))}
                         <button type="submit" className="players-form-button">Confirm Changes</button>
                     </form>
@@ -133,12 +150,12 @@ const NewGame = () => {
             )}
             <section className={`new-game ${formToggle ? "blurred" : ""}`}>
                 <div className="header">
-                    <h1>{teams[0].name}</h1>
+                    <h1>{data.name}</h1>
                     <Link className="link-button" to={`/menu/${teamName}`}>Menu</Link>
                 </div>
                 <h2>Current Team Players: </h2>
                 <p className="players-list">
-                    {teams[0].players.map((player) => {
+                    {data.players.map((player) => {
                         return player.name;
                     }).join(", ")}
                 </p>
@@ -197,6 +214,7 @@ const NewGame = () => {
                     ))}
                 </section>
             </section>
+            </> )};
         </>
     );
 };
