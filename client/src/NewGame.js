@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { teams } from './DummyData';
 import { Link, useParams } from "react-router-dom";
+import { db } from "./firebase";
+import { addDoc, collection} from "firebase/firestore";
 
 const NewGame = () => {
 
@@ -106,10 +108,19 @@ const NewGame = () => {
         setLayout(prev => !prev)
     }
     
-    const handleSubmitStats = (e) => {
+    const handleSubmitStats = async (e) => {
         e.preventDefault();
         if (teams[0].secret === secret){
             alert("Stats have been successfully submited!");
+            try {
+                const docRef = await addDoc(collection(db, "teams"), {
+                    name: "Panteras",
+                    secret: "12345",
+                });
+                alert(`Document written with ID: ${docRef}`);
+            } catch (error) {
+                alert(`Error: ${error}`)
+            }
         }
         else {
             alert("Wrong team password!")
