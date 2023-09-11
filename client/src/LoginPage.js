@@ -1,22 +1,29 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { firestore } from "./firebase"
+import { teams } from './DummyData';
 
 
 
 const LoginPage = () => {
 
     const [teamName, setTeamName] = useState("");
-    const [teamPassword, setTeamPassword] = useState("");
 
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-
-        firestore.collection("teams").where("name", "==", teamName)
-
-        navigate('/menu');
+        let found = false;
+        teams.forEach((team) => {
+            if (team.name === teamName){
+                found = true;
+            }
+        })
+        if (found){
+           navigate(`/menu/${teamName}`); 
+        } else {
+            alert("Team not in database!")
+        }
+        
     }
 
     return (
@@ -25,8 +32,6 @@ const LoginPage = () => {
             <form onSubmit={handleSubmit}>
                 <label htmlFor="team-name">Team Name</label>
                 <input id="team-name" type="text" name="teamName" value={teamName} onChange={(e) => setTeamName(e.target.value)} required/>
-                <label htmlFor="team-password">Password</label>
-                <input id="team-password" type="password" name="teamPassword" value={teamPassword} onChange={(e) => setTeamPassword(e.target.value)} required/>
                 <button type="submit">Sign In</button>
             </form>
         </section>

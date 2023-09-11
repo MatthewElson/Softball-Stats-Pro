@@ -8,6 +8,7 @@ body {
   max-width: 390px;
   margin: 0 auto;
   font-family: 'DM Sans', sans-serif;
+  background-color: #94A684;
 }
 
 button {
@@ -15,13 +16,13 @@ button {
   font-weight: 500;
 }
 
-.login, .menu {
+.login, .menu, .team-stats {
   height: 100vh;
   background-color: #94A684;
   padding: 0 15px;
 }
 
-.login h1, .menu h1, .new-game h1 {
+.login h1, .menu h1, .new-game h1, .team-stats h1 {
   text-align: center;
   font-weight: 900;
   font-size: xx-large;
@@ -69,14 +70,27 @@ button {
   border-radius: 5px;
 }
 
-.menu .menu-buttons .link-button:active {
-  color: black;
-}
-
 .new-game {
   background-color: #94A684;
   padding: 0 15px 15px 15px;
   min-height: 100vh;
+}
+
+.new-game .header, .team-stats .header {
+  display: flex;
+  gap: 4em;
+  justify-content: center;
+  align-items: center;
+}
+
+.new-game .header .link-button, .team-stats .header .link-button {
+  text-decoration: none;
+  color: black;
+  text-align: center;
+  background-color: white;
+  border: 1px black solid;
+  padding: 0.25em 0.5em;
+  border-radius: 5px;
 }
 
 .new-game-form {
@@ -323,3 +337,20 @@ button {
   border-radius: 5px;
   margin: 10px 0px;
 }
+
+.team-stats .table {
+  display: flex;
+  flex-direction: column;
+  overflow-x: scroll;
+}
+
+.team-stats .table table {
+  border-spacing: 20px 10px;
+  background-color: white;
+  border-radius: 5px;
+}
+
+.team-stats .table table td {
+  text-align: center;
+}
+

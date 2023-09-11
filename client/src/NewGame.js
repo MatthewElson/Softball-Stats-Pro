@@ -1,81 +1,21 @@
 import React, { useState } from 'react';
-import { Gavilanes } from './DummyData';
+import { teams } from './DummyData';
+import { Link, useParams } from "react-router-dom";
 
 const NewGame = () => {
 
-    const [players, setPlayers] = useState([
-        "Alonso",
-        "Guerra",
-        "Miguel",
-        "Rogelio",
-        "Manuel",
-        "José",
-        "Marcelo",
-        "Eugenio",
-        "Wicho",
-        "Mauricio"
-    ])
-
+    const { teamName } = useParams();
+    const [players, setPlayers] = useState(["Alonso", "Guerra", "Miguel", "Rogelio", "Manuel", "José", "Marcelo", "Eugenio", "Wicho", "Mauricio"])
     const [tempPlayers, setTempPlayers] = useState(players);
-
-    const [gameStats, setGameStats] = useState([
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-    ])
-
-    const [rbis, setRbis] = useState([
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-    ])
-
-    const [sbs, setSbs] = useState([
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-    ])
-
-    const [average, setAverage] = useState([
-        [0, 0],
-        [0, 0],
-        [0, 0],
-        [0, 0],
-        [0, 0],
-        [0, 0],
-        [0, 0],
-        [0, 0],
-        [0, 0],
-        [0, 0],
-    ])
-
+    const [gameStats, setGameStats] = useState([[], [], [], [], [], [], [], [], [], []]);
+    const [rbis, setRbis] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+    const [sbs, setSbs] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+    const [average, setAverage] = useState([[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]);
     const [selectedPlayerIdx, setSelectedPlayerIdx] = useState(0);
-
     const [toggle, setToggle] = useState(false);
-
     const [formToggle, setFormToggle] = useState(false);
-
+    const [layout, setLayout] = useState(true)
+    const [secret, setSecret] = useState("");
     const goodButtons = ["Single", "Double", "Triple", "Homerun", "Walk"]
     const badButtons = ["Out", "Strikeout"];
 
@@ -162,17 +102,13 @@ const NewGame = () => {
         setPlayers(tempPlayers);
     }
 
-    const [layout, setLayout] = useState(false)
-
     const handleLayout = () => {
         setLayout(prev => !prev)
     }
-
-    const [secret, setSecret] = useState("");
     
     const handleSubmitStats = (e) => {
         e.preventDefault();
-        if (Gavilanes.secret === secret){
+        if (teams[0].secret === secret){
             alert("Stats have been successfully submited!");
         }
         else {
@@ -194,14 +130,17 @@ const NewGame = () => {
                 </section>
             )}
             <section className={`new-game ${formToggle ? "blurred" : ""}`}>
-                <h1>Gavilanes</h1>
+                <div className="header">
+                    <h1>{teams[0].name}</h1>
+                    <Link className="link-button" to={`/menu/${teamName}`}>Menu</Link>
+                </div>
                 <h2>Current Team Players: </h2>
                 <p className="players-list">
-                    {Gavilanes.players.map((player) => {
+                    {teams[0].players.map((player) => {
                         return player.name;
                     }).join(", ")}
                 </p>
-                <h2>Publish Stats</h2>
+                <h2>Publish Stats:</h2>
                 <form className="form-submit-stats" onSubmit={handleSubmitStats}>
                     <label htmlFor="secret">Team Password</label>
                     <input id="secret" type="password" name="secret" value={secret} onChange={(e) => setSecret(e.target.value)} required/>
