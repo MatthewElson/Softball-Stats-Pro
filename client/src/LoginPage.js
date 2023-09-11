@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { teams } from './DummyData';
+import { db } from "./firebase";
+import { getDocs, collection } from "firebase/firestore";
 
 
 
@@ -10,18 +11,23 @@ const LoginPage = () => {
 
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        let found = false;
-        teams.forEach((team) => {
-            if (team.name === teamName){
-                found = true;
+
+        let teamFound = false;
+
+        const querySnapshot = await getDocs(collection(db, "teams"));
+        querySnapshot.forEach((item) => {          
+            if (item.data().name === teamName) {
+                teamFound = true;
             }
         })
-        if (found){
+
+        if (teamFound){
            navigate(`/menu/${teamName}`); 
         } else {
-            alert("Team not in database!")
+            alert("Team not in database!");
+            setTeamName("");
         }
         
     }
