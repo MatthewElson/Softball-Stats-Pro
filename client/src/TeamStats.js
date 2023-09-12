@@ -18,7 +18,7 @@ const TeamStats = () => {
 
     useEffect(() => {
         myFunction();
-    });
+    }, []);
 
     return (
         <section className="team-stats">
@@ -55,7 +55,7 @@ const TeamStats = () => {
                                 <tr key={idx}>
                                     <td style={{textAlign: "left"}}>{player.name}</td>
                                     <td>{player.games}</td>
-                                    <td>{player.singles}</td>
+                                    <td>{player.singles + player.doubles + player.triples + player.homeruns + player.strikeouts + player.outs}</td>
                                     <td>{player.singles + player.doubles + player.triples + player.homeruns}</td>
                                     <td>{player.singles}</td>
                                     <td>{player.doubles}</td>

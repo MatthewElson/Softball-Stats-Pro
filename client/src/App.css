@@ -111,7 +111,7 @@ button {
   flex-direction: column;
   gap: 15px;
   background-color: #94A684;
-  padding: 4em 5em;
+  padding: 2em 5em;
   border-radius: 10px;
   border: 1px solid black;
 }
@@ -121,10 +121,10 @@ button {
   margin: 0;
 }
 
-.new-game-form .players-form input {
+.new-game-form .players-form select {
   border-radius: 5px;
   border: 1px solid black;
-  padding: 4px 5px;
+  padding: 3px 5px;
 }
 
 .new-game-form .players-form-button {
@@ -193,6 +193,15 @@ button {
   margin-bottom: 10px;
 }
 
+.new-game .offense-boxes .empty-boxes {
+  font-size: large;
+  background-color: white;
+  padding: 10px;
+  border: 1px solid black;
+  border-radius: 5px;
+  margin-top: 0px;
+}
+
 .new-game .offense-boxes .box {
   display: flex;
   flex-direction: column;
@@ -201,6 +210,10 @@ button {
   border: 1px solid black;
   border-radius: 5px;
   background-color: white;
+}
+
+.new-game .offense-boxes .box.hidden {
+  display: none;
 }
 
 .new-game .offense-boxes .box.two-box {
@@ -336,6 +349,16 @@ button {
   padding: 0.25em 0;
   border-radius: 5px;
   margin: 10px 0px;
+}
+
+.new-game .delete-button {
+  color: white;
+  text-align: center;
+  border: 1px solid black;
+  background-color: red;
+  padding: 0.25em 0;
+  border-radius: 5px;
+  width: 100%;
 }
 
 .team-stats .table {
