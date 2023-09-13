@@ -195,7 +195,9 @@ const NewGame = () => {
                             });
                             prevStats.sbs += sbs[idx];
                             prevStats.rbis += rbis[idx];
-                            prevStats.games += 1;
+                            if (gameStats[idx].length > 0){
+                                prevStats.games += 1;
+                            }
                             return { ...plyr, ...prevStats };
                         }
                         return plyr;
@@ -203,9 +205,11 @@ const NewGame = () => {
                     
                     await updateDoc(docRef, { players: updatedPlayers });
                 }
+                alert("Stats have been successfully added")
             } else {
-                alert("Wrong team password!");
+                alert("Wrong team password");
             }
+            setSecret("");
         } catch (error) {
            alert(`Error updating document: ${error}`);        
         }
@@ -240,13 +244,7 @@ const NewGame = () => {
                     <h1>{data.name}</h1>
                     <Link className="link-button" to={`/menu/${teamName}`}>Menu</Link>
                 </div>
-                <h2>Current Team Players: </h2>
-                <p className="players-list">
-                    {data.players.map((player) => {
-                        return player.name;
-                    }).join(", ")}
-                </p>
-                <h2>Publish Stats:</h2>
+                <h2>Submit Stats:</h2>
                 <form className="form-submit-stats" onSubmit={handleSubmitStats}>
                     <label htmlFor="secret">Team Password</label>
                     <input id="secret" type="password" name="secret" value={secret} onChange={(e) => setSecret(e.target.value)} required/>
@@ -262,7 +260,7 @@ const NewGame = () => {
                 </section>
                 <section className="offense-boxes">
                     {players[0] === "Select a player" && (
-                        <h2 className="empty-boxes">SELECT LINEUP</h2>
+                        <h2 className="empty-boxes">SELECT LINEUP ↗️</h2>
                     )}
                     {players.map((player, idx) => (
                         <div className={`box ${layout ? "two-box" : ""} ${(players[selectedPlayerIdx] !== "Select a player" && player === players[selectedPlayerIdx]) ? "selected" : ""} ${player === "Select a player" ? "hidden" : ""}`} key={idx}>
