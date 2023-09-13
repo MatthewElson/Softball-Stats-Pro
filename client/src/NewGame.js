@@ -219,7 +219,7 @@ const NewGame = () => {
 
     return (
         <>
-        {loading ? (<h1>Loading Stats...</h1>) : (
+        {loading ? (<h1 className="loading">Loading Stats...</h1>) : (
                 <>
             {formToggle && (
                 <section className="new-game-form">

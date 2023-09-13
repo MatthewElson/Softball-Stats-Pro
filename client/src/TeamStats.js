@@ -23,7 +23,7 @@ const TeamStats = () => {
 
     return (
         <section className="team-stats">
-            {loading ? (<h1>Loading Stats...</h1>) : (
+            {loading ? (<h1 className="loading">Loading Stats...</h1>) : (
                 <>
                 <div className="header">
                     <h1>{data.name}</h1>

@@ -339,11 +339,13 @@ button {
 }
 
 .new-game .form-submit-stats button {
-  background-color: #FFF;
   font-size: 1em;
   padding: 0.25em 0;
   border-radius: 5px;
-  margin: 10px 0px;
+  margin-top: 10px;
+  color: black;
+  border: 1px solid black;
+  background-color: white;
 }
 
 .new-game .delete-button {
@@ -427,9 +429,12 @@ button {
   width: 50%;
   display: block;
   margin: 0px auto 10px auto;
-  
 }
 
 .ut-view {
   padding-bottom: 20px;
+}
+
+.loading {
+  text-align: center;
 }
