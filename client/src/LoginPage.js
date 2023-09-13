@@ -21,7 +21,7 @@ const LoginPage = () => {
             navigate(`/menu/${teamName}`)
         } else {
             setTeamName("");
-            alert("Team not in database!");
+            alert("Team not found");
         }
     }
 
