@@ -4,7 +4,7 @@ A website created to facilitate tracking players stats throughout a softball sea
 # Features
 
 **Login Page**
-- Users can select any team by typing the team name
+- Users can select any team by typing its name
 
 **Menu Page**
 - Users can choose between three options
@@ -37,8 +37,7 @@ Node.js and npm installed on your development machine
 
 3. Set Up Environment Variables
 - Create a .env file in the projects root directory
-- Include the environment variables for your firebase firestore
-  - If stuck follow this steps: https://firebase.google.com/docs/web/setup
+- Include the environment variables for your firebase firestore (https://firebase.google.com/docs/web/setup)
 
 4. Install Node.js Dependencies
 - Run the command "npm install" in the projects directory
