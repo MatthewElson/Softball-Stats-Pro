@@ -1,29 +1,30 @@
 # Softball-Stats-Pro
 A website created to facilitate tracking players stats throughout a softball season.
 
-# Features
-# Login Page
+**Features**
+
+**Login Page**
 - Users can select any team by typing the team name
 
-# Menu Page
+**Menu Page**
 - Users can choose between three options
   - Record Game: Allows users to record game statistics
   - View Team Stats: Displays comprehensive statistics for the team
   - Return: Returns to login page in case user wants to view another team
 
- # Record Game Page
+ **Record Game Page**
  - Users can select the starting lineup from a dropdown menu that is connected to the database to display the teams players
  - Users can click on various buttons to keep track of the teams game statistics (hits, rbis, stolen bases, walks, and outs)
  - Users can submit the teams game statistics by typing the team password and clicking the submit button
 
-# Team Stats Page
+**Team Stats Page**
 - Users can visualize detailed statistics for each player on the team
 - Users can switch between different views (table or user-friendly) to visualize the statistics
 
-# Data Storage
+**Data Storage**
 - Website utilizes Firebase Firestore database in order to store all team data including the player statistics and team password
 
-# Getting Started
+**Getting Started**
 
 Before you begin, ensure that you have the following requirements:
 
