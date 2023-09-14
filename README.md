@@ -1,7 +1,7 @@
 # Softball-Stats-Pro
 A website created to facilitate tracking players stats throughout a softball season.
 
-**Features**
+# Features
 
 **Login Page**
 - Users can select any team by typing the team name
@@ -24,7 +24,7 @@ A website created to facilitate tracking players stats throughout a softball sea
 **Data Storage**
 - Website utilizes Firebase Firestore database in order to store all team data including the player statistics and team password
 
-**Getting Started**
+# Getting Started
 
 Before you begin, ensure that you have the following requirements:
 
