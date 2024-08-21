@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { db } from "./firebase";
-import { doc, getDoc } from "firebase/firestore";
-
-
+import { app, db } from "./firebase";
+import random from 'random'
+import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 
 const LoginPage = () => {
-
+    const [isLoading, setIsLoading] = useState(true);
     const [teamName, setTeamName] = useState("");
 
     const navigate = useNavigate();
@@ -14,15 +13,34 @@ const LoginPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const docRef = doc(db, "teams", teamName);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()){
-            navigate(`/menu/${teamName}`)
-        } else {
-            setTeamName("");
-            alert("Team not found");
-        }
+        const colRef = collection(db, "teams")
+        const teams = [];
+        getDocs(colRef)
+            .then((snapshot) => {
+                console.log('snapshot.docs :', snapshot.docs);
+                snapshot.docs.forEach(doc => {
+                    teams.push({ ...doc.data(), id: doc.id});
+                })
+                console.log('teams :', teams);
+                const filteredTeams = teams.find((v) => v.name === teamName)
+                console.log('filteredTeams :', filteredTeams);
+                setTimeout(() => {
+                    setIsLoading(false);
+                    if (filteredTeams && filteredTeams.name === teamName){
+                        navigate(`/menu/${ teamName }`);
+                    } else {
+                        setTeamName("");
+                        alert("Team not found");
+                    }
+                    console.log(teams);
+                }, random.float(1000, 2000));
+                if(isLoading){
+                    
+                }
+            })
+            .catch(err => {
+                console.log(err.message);
+            })
     }
 
     return (

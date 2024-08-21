@@ -5,7 +5,8 @@
 }
 
 body {
-  max-width: 390px;
+  max-width: 600px;
+  min-width: 325px;
   margin: 0 auto;
   font-family: 'DM Sans', sans-serif;
   background-color: #94A684;
@@ -14,6 +15,10 @@ body {
 button {
   font-family: 'DM Sans', sans-serif;
   font-weight: 500;
+}
+
+.login{
+  min-width: 200px;
 }
 
 .login, .menu, .team-stats {
@@ -36,7 +41,7 @@ button {
   font-weight: 500;
   width: 80%;
   margin: 0 auto;
-  gap: 10px;
+  gap: 2%;
 }
 
 .login form input {
@@ -59,7 +64,7 @@ button {
   flex-direction: column;
   width: 80%;
   margin: 0 auto;
-  gap: 20px;
+  gap: 4%;
 }
 
 .menu .menu-buttons .link-button {
@@ -95,7 +100,7 @@ button {
   border-radius: 5px;
 }
 
-.new-game-form {
+.new-game-form, .submit-stats-form-container {
   position: fixed;
   top: 0;
   left: 0;
@@ -108,28 +113,28 @@ button {
   align-items: center;
 }
 
-.new-game-form .players-form {
+.new-game-form .players-form, .submit-stats-form-container .submit-stats-form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 2.5%;
   background-color: #94A684;
   padding: 2em 5em;
   border-radius: 10px;
   border: 1px solid black;
 }
 
-.new-game-form .players-form h1{
+.new-game-form .players-form h1, .submit-stats-form-container .submit-stats-form h1{
   text-align: center;
   margin: 0;
 }
 
-.new-game-form .players-form select {
+.new-game-form .players-form select, .submit-stats-form-container .submit-stats-form select {
   border-radius: 5px;
   border: 1px solid black;
   padding: 3px 5px;
 }
 
-.new-game-form .players-form-button {
+.new-game-form .players-form-button, .submit-stats-form-container .submit-stats-form-button  {
   color: white;
   text-align: center;
   border: none;
@@ -157,7 +162,7 @@ button {
 
 .new-game .offense-heading div {
   display: flex;
-  gap: 10px;
+  gap: 2%;
 }
 
 .new-game .offense-heading div button {
@@ -181,7 +186,7 @@ button {
 .new-game .offense-boxes {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 2%;
   justify-content: center;
   margin: 10px 0px 20px 0px
 }
@@ -200,7 +205,7 @@ button {
 .new-game .offense-boxes .box {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 1%;
   width: 100%;
   border: 1px solid black;
   border-radius: 5px;
@@ -258,8 +263,8 @@ button {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 2%;
+  margin-bottom: 1%;
 }
 
 .new-game .offense-good-buttons button {
@@ -274,8 +279,8 @@ button {
 
 .new-game .offense-sbs-buttons {
   display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 2%;
+  margin-bottom: 1%;
 }
 
 .new-game .offense-sbs-buttons button {
@@ -290,8 +295,8 @@ button {
 
 .new-game .offense-rbis-buttons {
   display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 2%;
+  margin-bottom: 1%;
 }
 
 .new-game .offense-rbis-buttons button {
@@ -306,8 +311,8 @@ button {
 
 .new-game .offense-bad-buttons {
   display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 2%;
+  margin-bottom: 1%;
 }
 
 .new-game .offense-bad-buttons button {
@@ -324,21 +329,20 @@ button {
   display: none;
 }
 
-.new-game .form-submit-stats {
+.new-game {
   display: flex;
   flex-direction: column;
   font-weight: 500;
-  width: 80%;
   margin: 0 auto;
-  gap: 10px;
+  gap: 2%;
 }
 
-.new-game .form-submit-stats input {
+.new-game input {
   height: 1.5rem;
   border-radius: 5px;
 }
 
-.new-game .form-submit-stats button {
+.new-game button {
   font-size: 1em;
   padding: 0.25em 0;
   border-radius: 5px;

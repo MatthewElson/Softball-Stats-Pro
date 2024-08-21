@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { db } from "./firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
+// import CloseButton from 'react-bootstrap/CloseButton';
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import Form from 'react-bootstrap/Form';
+import NavBar from './NavBar';
 
 const NewGame = () => {
 
@@ -15,6 +20,7 @@ const NewGame = () => {
     const [selectedPlayerIdx, setSelectedPlayerIdx] = useState();
     const [toggle, setToggle] = useState(false);
     const [formToggle, setFormToggle] = useState(false);
+    const [popupToggle, setPopupToggle] = useState(false);
     const [layout, setLayout] = useState(true)
     const [secret, setSecret] = useState("");
     const goodButtons = ["Single", "Double", "Triple", "Homerun", "Walk"]
@@ -22,16 +28,16 @@ const NewGame = () => {
     const [data, setData] = useState({});
     const [loading, setLoading] = useState(true);
 
-    const myFunction = async () => {
-        const docRef = doc(db, "teams", teamName);
-        const docSnap = await getDoc(docRef);
-        setData(docSnap.data());
-        setLoading(false);
-    }
 
     useEffect(() => {
-        myFunction();
-    }, []);
+        const func = async () => {
+            const docRef = doc(db, "teams", teamName);
+            const docSnap = await getDoc(docRef);
+            setData(docSnap.data());
+            setLoading(false);
+        }
+        func();
+    }, [teamName]);
 
     const handleRadioChange = (e) => {
         const idx = Number(e.target.value);
@@ -63,35 +69,33 @@ const NewGame = () => {
 
                 if (toggle) {
                     if (selectedPlayerIdx !== players.length - 1){
-                        if (players[selectedPlayerIdx + 1] !== "Select a player"){
+                        if (players[selectedPlayerIdx + 1] !== "Select a player")
                             setSelectedPlayerIdx(prev => prev + 1);
-                        } else {
+                        else 
                             setSelectedPlayerIdx(0);
-                        }
-                        
-                    } else {
+                    } 
+                    else
                         setSelectedPlayerIdx(0);
-                    }
                 }
             }
 
             else if (stat === "RBI+" || (stat === "RBI-" && rbis[selectedPlayerIdx] > 0)){
                 const copiedRBIs = [...rbis];
-                if (stat === "RBI+"){
+                if (stat === "RBI+")
                     copiedRBIs[selectedPlayerIdx] += 1;
-                } else {
+                else
                     copiedRBIs[selectedPlayerIdx] -= 1;
-                }
+
                 setRbis(copiedRBIs);
             }
 
             else if (stat === "SB+" || (stat === "SB-" && sbs[selectedPlayerIdx] > 0)){
                 const copiedSbs = [...sbs];
-                if (stat === "SB+"){
+                if (stat === "SB+")
                     copiedSbs[selectedPlayerIdx] += 1;
-                } else {
+                else
                     copiedSbs[selectedPlayerIdx] -= 1;
-                }
+
                 setSbs(copiedSbs);
             }
         }
@@ -122,6 +126,10 @@ const NewGame = () => {
 
     const handleFormToggle = () => {
         setFormToggle((prev) => !prev);
+    }
+
+    const handlePopupToggle = () => {
+        setPopupToggle(prev => !prev);
     }
 
     const handleChange = (e, idx) => {
@@ -157,7 +165,7 @@ const NewGame = () => {
                 
                 for (const player of players) {
                     const idx = players.indexOf(player);
-
+                    
                     const docRef = doc(db, "teams", teamName);
                     const docSnap = await getDoc(docRef);
                     const teamPlayers = docSnap.data().players;
@@ -228,7 +236,8 @@ const NewGame = () => {
                         {tempPlayers.map((player, idx) => (
                             <select key={idx} value={player} onChange={(e) => handleChange(e, idx)}>
                                 <option value="Select a player">Select a player</option>
-                                {data.players.map((playerData) => (
+                                {console.log('?data.players', data.players)}
+                                {data.players.map(playerData => (
                                     <option key={playerData.name} value={playerData.name}>
                                         {playerData.name}
                                     </option>
@@ -239,17 +248,46 @@ const NewGame = () => {
                     </form>
                 </section>
             )}
+            {popupToggle && (
+                // <section className="submit-stats-form-container">
+                //      <form className="submit-stats-form" onSubmit={handleSubmitStats}>
+                //         <h2>Submit Stats:</h2>
+                //         <CloseButton aria-label="Hide"/>
+                //         <label htmlFor="secret">Team Password</label>
+                //         <input id="secret" type="password" name="secret" value={secret} onChange={(e) => setSecret(e.target.value)} required/>
+                //         <button type="submit" className="submit-stats-form-button">Submit Stats</button>
+                //      </form>
+                // </section>
+                <div className="modal show" style={{ display: 'block', position: 'initial' }}
+                >
+                    <Modal.Dialog>
+                        <Modal.Header closeButton>
+                        <Modal.Title>Submit Stats</Modal.Title>
+                        </Modal.Header>
+                
+                        <Form>
+                            <Modal.Body>
+                                <Form.Group className="mb-3" controlId="formPassword">
+                                    <Form.Label>Team Password</Form.Label>
+                                    <Form.Control type="password" placeholder="Password" onChange={(e) => setSecret(e.target.value)} required/>
+                                    {/* <input id="secret" type="password" name="secret" value={secret} /> */}
+                                </Form.Group>
+                            </Modal.Body>
+                    
+                            <Modal.Footer>
+                                <Button variant="secondary">Close</Button>
+                                <Button type="submit" variant="primary">Submit Stats</Button>
+                            </Modal.Footer>
+                        </Form>
+                    </Modal.Dialog>
+                </div>
+            )}
             <section className={`new-game ${formToggle ? "blurred" : ""}`}>
                 <div className="header">
                     <h1>{data.name}</h1>
-                    <Link className="link-button" to={`/menu/${teamName}`}>Menu</Link>
+                    <NavBar teamName={teamName}/>
                 </div>
-                <h2>Submit Stats:</h2>
-                <form className="form-submit-stats" onSubmit={handleSubmitStats}>
-                    <label htmlFor="secret">Team Password</label>
-                    <input id="secret" type="password" name="secret" value={secret} onChange={(e) => setSecret(e.target.value)} required/>
-                    <button type="submit">Submit Stats</button>
-                </form>
+                <button onClick={handlePopupToggle}>Submit Stats</button>
                 <section className="offense-heading">
                     <h2>Offense:</h2>
                     <div>

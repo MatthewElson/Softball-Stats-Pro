@@ -5,7 +5,6 @@ import MenuPage from './MenuPage';
 import NewGame from './NewGame';
 import TeamStats from './TeamStats';
 
-
 function App() {
   return (
     <BrowserRouter>

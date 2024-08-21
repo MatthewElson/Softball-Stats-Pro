@@ -10,20 +10,22 @@ const TeamStats = () => {
     const [loading, setLoading] = useState(true);
     const [view, setView] = useState(false);
 
-    const myFunction = async () => {
-        const docRef = doc(db, "teams", teamName);
-        const docSnap = await getDoc(docRef);
-        setData(docSnap.data());
-        setLoading(false);
-    }
-
     useEffect(() => {
-        myFunction();
-    }, []);
+        const func = async () => {
+            const docRef = doc(db, "teams", teamName);
+            const docSnap = await getDoc(docRef);
+            setData(docSnap.data());
+            setLoading(false);
+        }
+
+        func();
+    }, [teamName]);
 
     return (
         <section className="team-stats">
-            {loading ? (<h1 className="loading">Loading Stats...</h1>) : (
+            {loading 
+                ? (<h1 className="loading">Loading Stats...</h1>) 
+                : (
                 <>
                 <div className="header">
                     <h1>{data.name}</h1>
