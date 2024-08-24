@@ -14,7 +14,7 @@ A website created to facilitate tracking players stats throughout a softball sea
 
  **Record Game Page**
  - Users can select the starting lineup from a dropdown menu that is connected to the database to display the teams players
- - Users can click on various buttons to keep track of the teams game statistics (hits, rbis, stolen bases, walks, and outs)
+ - Users can click on various buttons to keep track of the teams game statistics (hits, rbis, stolen bases, and outs)
  - Users can submit the teams game statistics by typing the team password and clicking the submit button
 
 **Team Stats Page**

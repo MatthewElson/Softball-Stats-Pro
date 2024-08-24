@@ -1,19 +1,35 @@
 import React from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useNavigate , useParams } from 'react-router-dom';
+import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 const MenuPage = () => {
 
     const { teamName } = useParams();
-
+    const navigate = useNavigate();
+    
     return (
-        <section className="menu">
-            <h1>Menu</h1>
-            <div className="menu-buttons">
-                <Link className="link-button" to={`/new-game/${teamName}`}>Record Game</Link>
-                <Link className="link-button" to={`/team-stats/${teamName}`}>View Team Stats</Link>
-                <Link className="link-button" to="/">Return</Link>
-            </div>
-        </section>
+        <Container id="menuContainer">
+            <Row>
+                <Col><h1>Menu</h1></Col>
+            </Row>
+            <Row className='text-center' xs={1}>
+                <Col className="mb-3 d-grid" md={4}>
+                    <Button onClick={() => navigate(`/new-game/${teamName}`)}>Record Game</Button>
+                </Col>
+                <Col className="mb-3 d-grid" md={4}>
+                    <Button onClick={() => navigate(`/manage-team/${teamName}`)}>Manage Team</Button>
+                </Col>
+                <Col className="mb-3 d-grid" md={4}>
+                    <Button onClick={() => navigate(`/team-stats/${teamName}`)}>View Team Stats</Button>
+                </Col>
+                <Col className="mb-3 d-grid">
+                    <Button onClick={() => navigate('/')}>Return</Button>
+                </Col>
+            </Row>
+        </Container>
     );
 };
 

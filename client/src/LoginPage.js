@@ -3,6 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { app, db } from "./firebase";
 import random from 'random'
 import { doc, getDoc, collection, getDocs } from "firebase/firestore";
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 const LoginPage = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -44,14 +49,20 @@ const LoginPage = () => {
     }
 
     return (
-        <section className="login">
-            <h1>Softball Stats Pro</h1>
-            <form onSubmit={handleSubmit}>
-                <label htmlFor="team-name">Team Name</label>
-                <input id="team-name" type="text" name="teamName" value={teamName} onChange={(e) => setTeamName(e.target.value)} required/>
-                <button type="submit">Sign In</button>
-            </form>
-        </section>
+        <Container>
+            <Row>
+                <Col><h1>Softball Stats Pro</h1></Col>
+            </Row>
+            <Row>
+                <Form onSubmit={handleSubmit} aria-label="Log in to Team">
+                <Form.Group className="mb-3" controlId="formBasicEmail">
+                    <Form.Label htmlFor="team-name">Team Name</Form.Label>
+                    <Form.Control id="team-name" value={teamName} className="mb-2" type="text" onChange={(e) => setTeamName(e.target.value)} placeholder='Team Name' maxLength={35} required/>
+                    <Button type="submit">Sign In</Button>
+                    </Form.Group>
+                </Form>
+            </Row>
+        </Container>
     );
 };
 

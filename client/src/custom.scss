@@ -1,0 +1,23 @@
+$team1Primary: #37d074;
+$team1Secondary: #19743e;
+$team1C3: #2c844f;
+$team1C4: #63cb8d;
+$team1C5: #8fc1a3;
+$team1Font: 'DM Sans', sans-serif;
+
+#body{
+    background-color: $team1C3;
+    min-width: 325px;
+    margin: 0 auto;
+    font-family: $team1Font;
+}
+
+/* make the customizations */
+$theme-colors: (
+    "primary": $team1Primary,
+    "secondary": $team1Secondary
+);
+
+
+/* import bootstrap to set changes */
+@import '~bootstrap/scss/bootstrap.scss';

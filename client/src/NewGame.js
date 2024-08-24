@@ -7,6 +7,10 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import NavBar from './NavBar';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+
 
 const NewGame = () => {
 
@@ -15,7 +19,6 @@ const NewGame = () => {
     const [tempPlayers, setTempPlayers] = useState(players);
     const [gameStats, setGameStats] = useState([[], [], [], [], [], [], [], [], [], []]);
     const [rbis, setRbis] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-    const [sbs, setSbs] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
     const [average, setAverage] = useState([[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]);
     const [selectedPlayerIdx, setSelectedPlayerIdx] = useState();
     const [toggle, setToggle] = useState(false);
@@ -23,7 +26,7 @@ const NewGame = () => {
     const [popupToggle, setPopupToggle] = useState(false);
     const [layout, setLayout] = useState(true)
     const [secret, setSecret] = useState("");
-    const goodButtons = ["Single", "Double", "Triple", "Homerun", "Walk"]
+    const goodButtons = ["Single", "Double", "Triple", "Homerun"]
     const badButtons = ["Out", "Strikeout"];
     const [data, setData] = useState({});
     const [loading, setLoading] = useState(true);
@@ -56,16 +59,14 @@ const NewGame = () => {
                 copiedStats[selectedPlayerIdx].push(stat);
                 setGameStats(copiedStats);
 
-                if (stat !== "Walk"){
-                    const copiedAverage = [...average];
-                    copiedAverage[selectedPlayerIdx][1] += 1;
-        
-                    if (goodButtons.includes(stat)) {
-                        copiedAverage[selectedPlayerIdx][0] += 1;
-                    }
-        
-                    setAverage(copiedAverage);
+                const copiedAverage = [...average];
+                copiedAverage[selectedPlayerIdx][1] += 1;
+    
+                if (goodButtons.includes(stat)) {
+                    copiedAverage[selectedPlayerIdx][0] += 1;
                 }
+    
+                setAverage(copiedAverage);
 
                 if (toggle) {
                     if (selectedPlayerIdx !== players.length - 1){
@@ -88,19 +89,7 @@ const NewGame = () => {
 
                 setRbis(copiedRBIs);
             }
-
-            else if (stat === "SB+" || (stat === "SB-" && sbs[selectedPlayerIdx] > 0)){
-                const copiedSbs = [...sbs];
-                if (stat === "SB+")
-                    copiedSbs[selectedPlayerIdx] += 1;
-                else
-                    copiedSbs[selectedPlayerIdx] -= 1;
-
-                setSbs(copiedSbs);
-            }
         }
-
-        
     }
 
     const handleDelete = () => {
@@ -179,9 +168,7 @@ const NewGame = () => {
                             outs: plyr.outs,
                             strikeouts: plyr.strikeouts,
                             rbis: plyr.rbis,
-                            sbs: plyr.sbs,
                             games: plyr.games,
-                            walks: plyr.walks,
                         };
                         if (player === plyr.name) {
                             gameStats[idx].forEach((type) => {
@@ -193,15 +180,12 @@ const NewGame = () => {
                                     prevStats.triples += 1;
                                 } else if (type === "Homerun") {
                                     prevStats.homeruns += 1;
-                                } else if (type === "Walk") {
-                                    prevStats.walks += 1;
                                 } else if (type === "Strikeout") {
                                     prevStats.strikeouts += 1;
                                 } else if (type === "Out") {
                                     prevStats.outs += 1;
                                 }
                             });
-                            prevStats.sbs += sbs[idx];
                             prevStats.rbis += rbis[idx];
                             if (gameStats[idx].length > 0){
                                 prevStats.games += 1;
@@ -223,127 +207,121 @@ const NewGame = () => {
         }
     };
     
-    
-
     return (
         <>
-        {loading ? (<h1 className="loading">Loading Stats...</h1>) : (
-                <>
-            {formToggle && (
-                <section className="new-game-form">
-                    <form className="players-form" onSubmit={handleSubmitForm}>
-                        <h1>Edit Players</h1>
-                        {tempPlayers.map((player, idx) => (
-                            <select key={idx} value={player} onChange={(e) => handleChange(e, idx)}>
-                                <option value="Select a player">Select a player</option>
-                                {console.log('?data.players', data.players)}
-                                {data.players.map(playerData => (
-                                    <option key={playerData.name} value={playerData.name}>
-                                        {playerData.name}
-                                    </option>
-                                ))}
-                            </select>
-                        ))}
-                        <button type="submit" className="players-form-button">Confirm Changes</button>
-                    </form>
-                </section>
-            )}
-            {popupToggle && (
-                // <section className="submit-stats-form-container">
-                //      <form className="submit-stats-form" onSubmit={handleSubmitStats}>
-                //         <h2>Submit Stats:</h2>
-                //         <CloseButton aria-label="Hide"/>
-                //         <label htmlFor="secret">Team Password</label>
-                //         <input id="secret" type="password" name="secret" value={secret} onChange={(e) => setSecret(e.target.value)} required/>
-                //         <button type="submit" className="submit-stats-form-button">Submit Stats</button>
-                //      </form>
-                // </section>
-                <div className="modal show" style={{ display: 'block', position: 'initial' }}
-                >
-                    <Modal.Dialog>
-                        <Modal.Header closeButton>
-                        <Modal.Title>Submit Stats</Modal.Title>
-                        </Modal.Header>
-                
-                        <Form>
-                            <Modal.Body>
-                                <Form.Group className="mb-3" controlId="formPassword">
-                                    <Form.Label>Team Password</Form.Label>
-                                    <Form.Control type="password" placeholder="Password" onChange={(e) => setSecret(e.target.value)} required/>
-                                    {/* <input id="secret" type="password" name="secret" value={secret} /> */}
-                                </Form.Group>
+            {loading ? (<><h1 className="loading">Loading Stats...</h1><NavBar teamName={teamName}/></>) : (
+            <>
+                {formToggle && (
+                    <div className="modal show" style={{ display: 'block', position: 'initial' }}>
+                        <Modal id="selectPlayersModal" show={formToggle} onHide={handleFormToggle}>
+                            <Modal.Header closeButton>
+                                <Modal.Title>Edit Players</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body id="selectPlayersModelBody">
+                                <Form>
+                                    {tempPlayers.map((player, idx) => (
+                                        <Form.Group className="mb-3" controlId={"formPlayer" + idx}>
+                                            <Form.Select key={idx} value={player} onChange={(e) => handleChange(e, idx)} aria-label='Select players'>
+                                                <option value="Select a player">Select a player</option>
+                                                {data.players.map(playerData => (
+                                                    <option key={playerData.name} value={playerData.name}>
+                                                        {playerData.name}
+                                                    </option>
+                                                ))}
+                                            </Form.Select>
+                                        </Form.Group>
+                                    ))}
+                                </Form>
                             </Modal.Body>
-                    
                             <Modal.Footer>
-                                <Button variant="secondary">Close</Button>
-                                <Button type="submit" variant="primary">Submit Stats</Button>
+                                <Button onClick={handleFormToggle}>Close</Button>
+                                <Button type="submit">Save</Button>
                             </Modal.Footer>
-                        </Form>
-                    </Modal.Dialog>
-                </div>
-            )}
-            <section className={`new-game ${formToggle ? "blurred" : ""}`}>
-                <div className="header">
-                    <h1>{data.name}</h1>
-                    <NavBar teamName={teamName}/>
-                </div>
-                <button onClick={handlePopupToggle}>Submit Stats</button>
-                <section className="offense-heading">
-                    <h2>Offense:</h2>
-                    <div>
-                        <button className="layout" onClick={handleLayout}>{layout ? "2" : "1"}</button>
-                        <button className="toggle" onClick={handleToggle}>{toggle ? "Auto" : "Manual"}</button>
-                        <button onClick={handleFormToggle}>Lineup</button>
+                        </Modal>
                     </div>
-                </section>
-                <section className="offense-boxes">
-                    {players[0] === "Select a player" && (
-                        <h2 className="empty-boxes">SELECT LINEUP ↗️</h2>
-                    )}
-                    {players.map((player, idx) => (
-                        <div className={`box ${layout ? "two-box" : ""} ${(players[selectedPlayerIdx] !== "Select a player" && player === players[selectedPlayerIdx]) ? "selected" : ""} ${player === "Select a player" ? "hidden" : ""}`} key={idx}>
-                            <label htmlFor={player}>
-                                <div className="upperbox">
-                                    <div className="player-name">{layout ? player.substring(0,4) + "." : player}</div>
-                                    <div className="player-average">{average[idx][0]}/{average[idx][1]}</div>
-                                    <div className="player-sbs">{sbs[idx]} {layout ? "" : "SB's"}</div>
-                                    <div className="player-rbis">{rbis[idx]} {layout ? "" : "RBI's"}</div>
-                                </div>
-                                <div className="lowerbox">
-                                    <div>{gameStats[idx].join(", ")}</div>
-                                </div>
-                            </label>
+                )}
+
+                {popupToggle && (
+                    <div className="modal show" style={{ display: 'block', position: 'initial' }}
+                    >
+                        <Modal show={popupToggle} onHide={handlePopupToggle}>
+                            <Modal.Header closeButton>
+                            <Modal.Title>Submit Stats</Modal.Title>
+                            </Modal.Header>
+                    
+                            <Form>
+                                <Modal.Body>
+                                    <Form.Group className="mb-3" controlId="formPassword">
+                                        <Form.Label>Team Password</Form.Label>
+                                        <Form.Control type="password" placeholder="Password" onChange={(e) => setSecret(e.target.value)} required/>
+                                        {/* <input id="secret" type="password" name="secret" value={secret} /> */}
+                                    </Form.Group>
+                                </Modal.Body>
+                        
+                                <Modal.Footer>
+                                    <Button variant="secondary" onClick={handlePopupToggle}>Close</Button>
+                                    <Button type="submit" variant="primary">Submit Stats</Button>
+                                </Modal.Footer>
+                            </Form>
+                        </Modal>
+                    </div>
+                )}
+                <Container className={`${formToggle ? "blurred" : ""}`}>
+                    <Row><Col><NavBar teamName={teamName}/></Col></Row>
+                    <Row><Col><Button onClick={handlePopupToggle}>Submit Stats</Button></Col></Row>
+                    <Row><Col>
+                        <h2>Offense:</h2>
+                        <div>
+                            <Button className="layout" onClick={handleLayout}>{layout ? "2" : "1"}</Button>
+                            <Button className="toggle" onClick={handleToggle}>{toggle ? "Auto" : "Manual"}</Button>
+                            <Button onClick={handleFormToggle}>Lineup</Button>
                         </div>
-                    ))}
-                </section>
-                <section className="offense-good-buttons">
-                    {goodButtons.map((btn) => (
-                        <button key={btn} value={btn} onClick={handleClick}>{btn}</button>
-                    ))}
-                </section>
-                <section className="offense-sbs-buttons">
-                    <button key="SB+" value="SB+" onClick={handleClick}>SB+</button>
-                    <button key="SB-" value="SB-" onClick={handleClick}>SB-</button>
-                </section>
-                <section className="offense-rbis-buttons">
-                    <button value="RBI+" onClick={handleClick}>RBI+</button>
-                    <button value="RBI-" onClick={handleClick}>RBI-</button>
-                </section>
-                <section className="offense-bad-buttons">
-                    {badButtons.map((btn) => (
-                        <button key={btn} value={btn} onClick={handleClick}>{btn}</button>
-                    ))}
-                </section>
-                <button className="delete-button" onClick={handleDelete}>Delete Stat</button>
-                <section className="offense-player-selector">
-                    {players.map((player, idx) => (
-                        <input key={idx} id={player} type="radio" name="selector" value={idx} checked={player === players[selectedPlayerIdx]} onChange={handleRadioChange} />
-                    ))}
-                </section>
-            </section>
-            </> )}
+                    </Col></Row>
+                    <Row><Col>
+                        {players[0] === "Select a player" && (
+                            <h2 className="empty-boxes">SELECT LINEUP ↗️</h2>
+                        )}
+                        {players.map((player, idx) => (
+                            <div className={`box ${layout ? "two-box" : ""} ${(players[selectedPlayerIdx] !== "Select a player" && player === players[selectedPlayerIdx]) ? "selected" : ""} ${player === "Select a player" ? "hidden" : ""}`} key={idx}>
+                                <label htmlFor={player}>
+                                    <div className="upperbox">
+                                        <div className="player-name">{layout ? player.substring(0,4) + "." : player}</div>
+                                        <div className="player-average">{average[idx][0]}/{average[idx][1]}</div>
+                                        <div className="player-rbis">{rbis[idx]} {layout ? "" : "RBI's"}</div>
+                                    </div>
+                                    <div className="lowerbox">
+                                        <div>{gameStats[idx].join(", ")}</div>
+                                    </div>
+                                </label>
+                            </div>
+                        ))}
+                    </Col></Row>
+                    <Row><Col>
+                        {goodButtons.map((btn) => (
+                            <Button key={btn} value={btn} onClick={handleClick}>{btn}</Button>
+                        ))}
+                    </Col></Row>
+                    <Row><Col>
+                        <Button value="RBI+" onClick={handleClick}>RBI+</Button>
+                        <Button value="RBI-" onClick={handleClick}>RBI-</Button>
+                    </Col></Row>
+                    <Row><Col>
+                        {badButtons.map((btn) => (
+                            <Button key={btn} value={btn} onClick={handleClick}>{btn}</Button>
+                        ))}
+                    </Col></Row>
+                    <Row><Col>
+                        <Button className="delete-Button" onClick={handleDelete}>Delete Stat</Button>
+                    </Col></Row>
+                    <Row><Col>
+                        {players.map((player, idx) => (
+                            <input key={idx} id={player} type="radio" name="selector" className='hidden' value={idx} checked={player === players[selectedPlayerIdx]} onChange={handleRadioChange} />
+                        ))}
+                    </Col></Row>
+                </Container>
+            </>)}
         </>
-    );
+    )
 };
 
 export default NewGame;

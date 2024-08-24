@@ -18,6 +18,7 @@ function MenuItems(teamName) {
     <>
         <Navbar key={'xs'} expand={'xs'}>
           <Container fluid>
+            <Navbar.Brand>{teamName}</Navbar.Brand>
             <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-xs`} />
             <Navbar.Offcanvas
               id={`offcanvasNavbar-expand-xs`}
@@ -31,7 +32,9 @@ function MenuItems(teamName) {
               </Offcanvas.Header>
               <Offcanvas.Body>
                 <Nav className="justify-content-end flex-grow-1 pe-3">
+                  <Nav.Link href={`/new-game/${teamName}`}>New Game</Nav.Link>
                   <Nav.Link href={`/team-stats/${teamName}`}>Stats</Nav.Link>
+                  <Nav.Link href={`/manage-team/${teamName}`}>Manage Team</Nav.Link>
                   <Nav.Link href="/">Sign Out</Nav.Link>
                 </Nav>
               </Offcanvas.Body>
