@@ -10,7 +10,8 @@ import NavBar from './NavBar';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-
+import Card from 'react-bootstrap/Card';
+import ListGroup from 'react-bootstrap/ListGroup';
 
 const NewGame = () => {
 
@@ -214,29 +215,29 @@ const NewGame = () => {
                 {formToggle && (
                     <div className="modal show" style={{ display: 'block', position: 'initial' }}>
                         <Modal id="selectPlayersModal" show={formToggle} onHide={handleFormToggle}>
-                            <Modal.Header closeButton>
-                                <Modal.Title>Edit Players</Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body id="selectPlayersModelBody">
-                                <Form>
-                                    {tempPlayers.map((player, idx) => (
-                                        <Form.Group className="mb-3" controlId={"formPlayer" + idx}>
-                                            <Form.Select key={idx} value={player} onChange={(e) => handleChange(e, idx)} aria-label='Select players'>
-                                                <option value="Select a player">Select a player</option>
-                                                {data.players.map(playerData => (
-                                                    <option key={playerData.name} value={playerData.name}>
-                                                        {playerData.name}
-                                                    </option>
-                                                ))}
-                                            </Form.Select>
-                                        </Form.Group>
-                                    ))}
-                                </Form>
-                            </Modal.Body>
-                            <Modal.Footer>
-                                <Button onClick={handleFormToggle}>Close</Button>
-                                <Button type="submit">Save</Button>
-                            </Modal.Footer>
+                            <Form onSubmit={handleSubmitForm}>
+                                <Modal.Header closeButton>
+                                    <Modal.Title>Edit Players</Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body id="selectPlayersModelBody">
+                                        {tempPlayers.map((player, idx) => (
+                                            <Form.Group className="mb-3" controlId={"formPlayer" + idx}>
+                                                <Form.Select key={idx} value={player} onChange={(e) => handleChange(e, idx)} aria-label='Select players'>
+                                                    <option value="Select a player">Select a player</option>
+                                                    {data.players.map(playerData => (
+                                                        <option key={playerData.name} value={playerData.name}>
+                                                            {playerData.name}
+                                                        </option>
+                                                    ))}
+                                                </Form.Select>
+                                            </Form.Group>
+                                        ))}
+                                </Modal.Body>
+                                <Modal.Footer>
+                                    <Button onClick={handleFormToggle}>Close</Button>
+                                    <Button type="submit">Save</Button>
+                                </Modal.Footer>
+                            </Form>
                         </Modal>
                     </div>
                 )}
@@ -266,58 +267,81 @@ const NewGame = () => {
                         </Modal>
                     </div>
                 )}
+                
                 <Container className={`${formToggle ? "blurred" : ""}`}>
                     <Row><Col><NavBar teamName={teamName}/></Col></Row>
-                    <Row><Col><Button onClick={handlePopupToggle}>Submit Stats</Button></Col></Row>
+                    <Row className='text-center' xs={1}>
+                        <Col className='mb-3 d-grid' md={12}>
+                            <Button onClick={handlePopupToggle}>Submit Stats</Button>
+                        </Col>
+                    </Row>
                     <Row><Col>
                         <h2>Offense:</h2>
-                        <div>
-                            <Button className="layout" onClick={handleLayout}>{layout ? "2" : "1"}</Button>
-                            <Button className="toggle" onClick={handleToggle}>{toggle ? "Auto" : "Manual"}</Button>
+                    </Col></Row>
+                    <Row className='text-center' xs={3}>
+                        <Col className='mb-3 d-grid'>
                             <Button onClick={handleFormToggle}>Lineup</Button>
-                        </div>
-                    </Col></Row>
+                        </Col>
+                        <Col className='mb-3 d-grid'>
+                            <Button className="layout" onClick={handleLayout}>{layout ? "2" : "1"}</Button>
+                        </Col>
+                        <Col className='mb-3 d-grid'>
+                            <Button className="toggle" onClick={handleToggle}>{toggle ? "Auto" : "Manual"}</Button>
+                        </Col>
+                    </Row>
+                    {players[0] === "Select a player" && (
+                        <Row><Col><h2 className="empty-boxes">SELECT LINEUP ↗️</h2></Col></Row>
+                    )}
                     <Row><Col>
-                        {players[0] === "Select a player" && (
-                            <h2 className="empty-boxes">SELECT LINEUP ↗️</h2>
-                        )}
                         {players.map((player, idx) => (
-                            <div className={`box ${layout ? "two-box" : ""} ${(players[selectedPlayerIdx] !== "Select a player" && player === players[selectedPlayerIdx]) ? "selected" : ""} ${player === "Select a player" ? "hidden" : ""}`} key={idx}>
-                                <label htmlFor={player}>
-                                    <div className="upperbox">
-                                        <div className="player-name">{layout ? player.substring(0,4) + "." : player}</div>
-                                        <div className="player-average">{average[idx][0]}/{average[idx][1]}</div>
-                                        <div className="player-rbis">{rbis[idx]} {layout ? "" : "RBI's"}</div>
-                                    </div>
-                                    <div className="lowerbox">
-                                        <div>{gameStats[idx].join(", ")}</div>
-                                    </div>
-                                </label>
-                            </div>
+                        <Row xs={ layout ? "2" : "1"} className={`mb-3 box ${(players[selectedPlayerIdx] !== "Select a player" && player === players[selectedPlayerIdx]) ? "selected" : ""} ${player === "Select a player" ? "hidden" : ""}`} key={idx}>
+                            <Col>
+                                <Card>
+                                    <Card.Body>
+                                        <Card.Title>{player}</Card.Title>
+                                        <ListGroup>
+                                            <ListGroup.Item className="player-average">{average[idx][0]}/{average[idx][1]}</ListGroup.Item>
+                                            <ListGroup.Item className="player-rbis">{rbis[idx]} {layout ? "" : "RBI's"}</ListGroup.Item>
+                                            <ListGroup.Item className={gameStats[idx].length ? "" : 'hidden'}>{gameStats[idx].join(", ")}</ListGroup.Item>
+                                        </ListGroup>
+                                    </Card.Body>
+                                </Card>
+                            </Col>
+                        </Row>
                         ))}
                     </Col></Row>
-                    <Row><Col>
+                    <Row className='justify-content-center' xs={2} md={3} lg={5}>
                         {goodButtons.map((btn) => (
-                            <Button key={btn} value={btn} onClick={handleClick}>{btn}</Button>
+                            <Col className='mx-3 d-grid'>
+                                <Button className="mb-3" key={btn} value={btn} onClick={handleClick}>{btn}</Button>
+                            </Col>
                         ))}
-                    </Col></Row>
-                    <Row><Col>
-                        <Button value="RBI+" onClick={handleClick}>RBI+</Button>
-                        <Button value="RBI-" onClick={handleClick}>RBI-</Button>
-                    </Col></Row>
-                    <Row><Col>
+                    </Row>
+                    <Row className='justify-content-center' xs={2} md={3} lg={5}>
+                        <Col className='mx-3 d-grid'>
+                            <Button className="mb-3" value="RBI+" onClick={handleClick}>RBI+</Button>
+                        </Col>
+                        <Col className='mx-3 d-grid'>
+                            <Button className="mb-3" value="RBI-" onClick={handleClick}>RBI-</Button>
+                        </Col>
                         {badButtons.map((btn) => (
-                            <Button key={btn} value={btn} onClick={handleClick}>{btn}</Button>
+                            <Col className='mx-3 d-grid'>
+                                <Button className="mb-3" key={btn} value={btn} onClick={handleClick}>{btn}</Button>
+                            </Col>
                         ))}
-                    </Col></Row>
-                    <Row><Col>
-                        <Button className="delete-Button" onClick={handleDelete}>Delete Stat</Button>
-                    </Col></Row>
-                    <Row><Col>
-                        {players.map((player, idx) => (
-                            <input key={idx} id={player} type="radio" name="selector" className='hidden' value={idx} checked={player === players[selectedPlayerIdx]} onChange={handleRadioChange} />
-                        ))}
-                    </Col></Row>
+                    </Row>
+                    <Row className='justify-content-center' xs={2} md={3} lg={5}>
+                        <Col className='mx-3 d-grid'>
+                            <Button className="mb-3 delete-Button" onClick={handleDelete}>Delete Stat</Button>
+                        </Col>
+                    </Row>
+                    <Row className='justify-content-center' xs={12}>
+                        <Col className='mx-3 d-grid'>
+                            {players.map((player, idx) => (
+                                <input key={idx} id={player} type="radio" name="selector" className='hidden' value={idx} checked={player === players[selectedPlayerIdx]} onChange={handleRadioChange} />
+                            ))}
+                        </Col>
+                    </Row>
                 </Container>
             </>)}
         </>

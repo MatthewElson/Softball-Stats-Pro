@@ -3,3 +3,18 @@
 #menuContainer{
     max-width:'80%';
 }
+
+#selectPlayersModelBody {
+	height: 70vh;
+	overflow-y: auto;
+}
+
+.hidden{
+    display: none !important;
+}
+
+.selected {
+    border: 5px;
+    border-radius: 6px;
+    border-style: solid;
+}
