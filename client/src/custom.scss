@@ -18,6 +18,16 @@ $theme-colors: (
     "secondary": $team1Secondary
 );
 
+.empty-boxes{
+    font-size: large;
+    background-color: $team1Primary;
+    padding: 1%;
+    border: 1px solid black;
+    border-radius: 1%;
+    margin-top: 0px;
+    text-align: center;
+}
+
 
 /* import bootstrap to set changes */
 @import '~bootstrap/scss/bootstrap.scss';

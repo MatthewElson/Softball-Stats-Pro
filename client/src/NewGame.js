@@ -235,7 +235,7 @@ const NewGame = () => {
                                 </Modal.Body>
                                 <Modal.Footer>
                                     <Button onClick={handleFormToggle}>Close</Button>
-                                    <Button type="submit">Save</Button>
+                                    <Button type="submit" variant="secondary">Save</Button>
                                 </Modal.Footer>
                             </Form>
                         </Modal>
@@ -276,7 +276,7 @@ const NewGame = () => {
                         </Col>
                     </Row>
                     <Row><Col>
-                        <h2>Offense:</h2>
+                        <h2 className='text-primary'>Offense:</h2>
                     </Col></Row>
                     <Row className='text-center' xs={3}>
                         <Col className='mb-3 d-grid'>
@@ -289,13 +289,9 @@ const NewGame = () => {
                             <Button className="toggle" onClick={handleToggle}>{toggle ? "Auto" : "Manual"}</Button>
                         </Col>
                     </Row>
-                    {players[0] === "Select a player" && (
-                        <Row><Col><h2 className="empty-boxes">SELECT LINEUP ↗️</h2></Col></Row>
-                    )}
-                    <Row><Col>
+                    <Row>
                         {players.map((player, idx) => (
-                        <Row xs={ layout ? "2" : "1"} className={`mb-3 box ${(players[selectedPlayerIdx] !== "Select a player" && player === players[selectedPlayerIdx]) ? "selected" : ""} ${player === "Select a player" ? "hidden" : ""}`} key={idx}>
-                            <Col>
+                            <Col xs={ layout ? "6" : "12"} className={`mb-3 ${(players[selectedPlayerIdx] !== "Select a player" && player === players[selectedPlayerIdx]) ? "selected" : ""} ${player === "Select a player" ? "hidden" : ""}`} key={idx}>
                                 <Card>
                                     <Card.Body>
                                         <Card.Title>{player}</Card.Title>
@@ -307,36 +303,35 @@ const NewGame = () => {
                                     </Card.Body>
                                 </Card>
                             </Col>
-                        </Row>
                         ))}
-                    </Col></Row>
-                    <Row className='justify-content-center' xs={2} md={3} lg={5}>
+                    </Row>
+                    <Row className='justify-content-center' xs={2} lg={5}>
                         {goodButtons.map((btn) => (
-                            <Col className='mx-3 d-grid'>
+                            <Col className='d-grid'>
                                 <Button className="mb-3" key={btn} value={btn} onClick={handleClick}>{btn}</Button>
                             </Col>
                         ))}
                     </Row>
-                    <Row className='justify-content-center' xs={2} md={3} lg={5}>
-                        <Col className='mx-3 d-grid'>
+                    <Row className='justify-content-center' xs={2} lg={5}>
+                        <Col className='d-grid'>
                             <Button className="mb-3" value="RBI+" onClick={handleClick}>RBI+</Button>
                         </Col>
-                        <Col className='mx-3 d-grid'>
+                        <Col className='d-grid'>
                             <Button className="mb-3" value="RBI-" onClick={handleClick}>RBI-</Button>
                         </Col>
                         {badButtons.map((btn) => (
-                            <Col className='mx-3 d-grid'>
+                            <Col className='d-grid'>
                                 <Button className="mb-3" key={btn} value={btn} onClick={handleClick}>{btn}</Button>
                             </Col>
                         ))}
                     </Row>
-                    <Row className='justify-content-center' xs={2} md={3} lg={5}>
-                        <Col className='mx-3 d-grid'>
+                    <Row className='justify-content-center' xs={2} lg={5}>
+                        <Col className='d-grid'>
                             <Button className="mb-3 delete-Button" onClick={handleDelete}>Delete Stat</Button>
                         </Col>
                     </Row>
                     <Row className='justify-content-center' xs={12}>
-                        <Col className='mx-3 d-grid'>
+                        <Col className='d-grid'>
                             {players.map((player, idx) => (
                                 <input key={idx} id={player} type="radio" name="selector" className='hidden' value={idx} checked={player === players[selectedPlayerIdx]} onChange={handleRadioChange} />
                             ))}
