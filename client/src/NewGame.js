@@ -159,7 +159,7 @@ const NewGame = () => {
                     const docRef = doc(db, "teams", teamName);
                     const docSnap = await getDoc(docRef);
                     const teamPlayers = docSnap.data().players;
-                    
+
                     const updatedPlayers = teamPlayers.map((plyr) => {
                         const prevStats = {
                             singles: plyr.singles,
@@ -235,7 +235,7 @@ const NewGame = () => {
                                 </Modal.Body>
                                 <Modal.Footer>
                                     <Button onClick={handleFormToggle}>Close</Button>
-                                    <Button type="submit" variant="secondary">Save</Button>
+                                    <Button type="submit" variant="success">Save</Button>
                                 </Modal.Footer>
                             </Form>
                         </Modal>
@@ -291,17 +291,19 @@ const NewGame = () => {
                     </Row>
                     <Row>
                         {players.map((player, idx) => (
-                            <Col xs={ layout ? "6" : "12"} className={`mb-3 ${(players[selectedPlayerIdx] !== "Select a player" && player === players[selectedPlayerIdx]) ? "selected" : ""} ${player === "Select a player" ? "hidden" : ""}`} key={idx}>
-                                <Card>
-                                    <Card.Body>
-                                        <Card.Title>{player}</Card.Title>
-                                        <ListGroup>
-                                            <ListGroup.Item className="player-average">{average[idx][0]}/{average[idx][1]}</ListGroup.Item>
-                                            <ListGroup.Item className="player-rbis">{rbis[idx]} {layout ? "" : "RBI's"}</ListGroup.Item>
-                                            <ListGroup.Item className={gameStats[idx].length ? "" : 'hidden'}>{gameStats[idx].join(", ")}</ListGroup.Item>
-                                        </ListGroup>
-                                    </Card.Body>
-                                </Card>
+                            <Col xs={ layout ? "6" : "12"} className={`mb-3  ${(players[selectedPlayerIdx] !== "Select a player" && player === players[selectedPlayerIdx]) ? "selected" : ""} ${player === "Select a player" ? "hidden" : ""}`} key={idx}>
+                                <label className='playerLabel' htmlFor={player}>
+                                    <Card className={`mb-3 ${(players[selectedPlayerIdx] !== "Select a player" && player === players[selectedPlayerIdx]) ? "selectedPlayer" : ""}`}>
+                                        <Card.Body>
+                                            <Card.Title>{player}</Card.Title>
+                                            <ListGroup>
+                                                <ListGroup.Item className="player-average">{average[idx][0]}/{average[idx][1]}</ListGroup.Item>
+                                                <ListGroup.Item className="player-rbis">{rbis[idx]} {layout ? "" : "RBI's"}</ListGroup.Item>
+                                                <ListGroup.Item className={gameStats[idx].length ? "" : 'hidden'}>{gameStats[idx].join(", ")}</ListGroup.Item>
+                                            </ListGroup>
+                                        </Card.Body>
+                                    </Card>
+                                </label>
                             </Col>
                         ))}
                     </Row>
@@ -317,7 +319,7 @@ const NewGame = () => {
                             <Button className="mb-3" value="RBI+" onClick={handleClick}>RBI+</Button>
                         </Col>
                         <Col className='d-grid'>
-                            <Button className="mb-3" value="RBI-" onClick={handleClick}>RBI-</Button>
+                            <Button className="mb-3" variant="warning" value="RBI-" onClick={handleClick}>RBI-</Button>
                         </Col>
                         {badButtons.map((btn) => (
                             <Col className='d-grid' key={btn} >
@@ -327,7 +329,7 @@ const NewGame = () => {
                     </Row>
                     <Row className='justify-content-center' xs={2} lg={5}>
                         <Col className='d-grid'>
-                            <Button className="mb-3 delete-Button" onClick={handleDelete}>Delete Stat</Button>
+                            <Button className="mb-3 delete-Button" variant='warning' onClick={handleDelete}>Delete Stat</Button>
                         </Col>
                     </Row>
                     <Row className='justify-content-center' xs={12}>

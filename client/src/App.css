@@ -13,9 +13,12 @@
     display: none !important;
 }
 
-.selected {
+.selectedPlayer {
     border: 5px;
     border-radius: 6px;
     border-style: solid;
 }
 
+.playerLabel{
+    width: 100%;
+}

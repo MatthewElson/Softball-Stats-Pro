@@ -4,7 +4,6 @@ import MenuPage from './MenuPage';
 import NewGame from './NewGame';
 import TeamStats from './TeamStats';
 import ManageTeam from './ManageTeam';
-import './App.css';
 
 function App() {
   return (
