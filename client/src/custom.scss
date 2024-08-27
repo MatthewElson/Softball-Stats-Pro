@@ -5,29 +5,12 @@ $team1C4: #63cb8d;
 $team1C5: #8fc1a3;
 $team1Font: 'DM Sans', sans-serif;
 
-#body{
-    background-color: $team1C3;
-    min-width: 325px;
-    margin: 0 auto;
-    font-family: $team1Font;
-}
 
 /* make the customizations */
 $theme-colors: (
     "primary": $team1Primary,
-    "secondary": $team1Secondary
+    "secondary": $team1Secondary,
 );
 
-.empty-boxes{
-    font-size: large;
-    background-color: $team1Primary;
-    padding: 1%;
-    border: 1px solid black;
-    border-radius: 1%;
-    margin-top: 0px;
-    text-align: center;
-}
-
-
 /* import bootstrap to set changes */
-@import '~bootstrap/scss/bootstrap.scss';
+@import 'node_modules/bootstrap/scss/bootstrap.scss';

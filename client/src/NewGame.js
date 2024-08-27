@@ -320,8 +320,8 @@ const NewGame = () => {
                             <Button className="mb-3" value="RBI-" onClick={handleClick}>RBI-</Button>
                         </Col>
                         {badButtons.map((btn) => (
-                            <Col className='d-grid'>
-                                <Button className="mb-3" key={btn} value={btn} onClick={handleClick}>{btn}</Button>
+                            <Col className='d-grid' key={btn} >
+                                <Button className="mb-3" variant="danger" value={btn} onClick={handleClick}>{btn}</Button>
                             </Col>
                         ))}
                     </Row>
