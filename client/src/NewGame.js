@@ -6,11 +6,11 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
+import CreatableSelect from 'react-select/creatable';
 import NavBar from './NavBar';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 
 const NewGame = () => {
@@ -31,7 +31,6 @@ const NewGame = () => {
     const badButtons = ["Out", "Strikeout"];
     const [data, setData] = useState({});
     const [loading, setLoading] = useState(true);
-
 
     useEffect(() => {
         const func = async () => {
@@ -122,20 +121,17 @@ const NewGame = () => {
         setPopupToggle(prev => !prev);
     }
 
-    const handleChange = (e, idx) => {
-        const copyTempPlayers = [...tempPlayers];
-        let changeValue = true;
-        for (let i = 0; i < copyTempPlayers.length; i++){
-            if (e.target.value !== "Select a player" && copyTempPlayers[i] === e.target.value) {
-                changeValue = false;
-                break;
-              }
-        }
-        if (changeValue){
-            copyTempPlayers[idx] = e.target.value;
-            setTempPlayers(copyTempPlayers);
-        }
+    const handleCreateNewPlayer = (inputValue) => {
+        // const newOption = createOption(inputValue);
+        // setOptions((prev) => [...prev, newOption]);
+        // setValue(newOption);
     }
+
+    const handleCreate = (inputValue) => {
+        //   const newOption = createOption(inputValue);
+        //   setOptions((prev) => [...prev, newOption]);
+        //   setValue(newOption);
+      };
 
     const handleSubmitForm = (e) => {
         e.preventDefault();
@@ -207,6 +203,34 @@ const NewGame = () => {
            alert(`Error updating document: ${error}`);        
         }
     };
+
+    const selectPlayerList = (i) => {
+        const dropdownObject = [];
+        dropdownObject.push(...data.players.filter((v,i) => 
+           {return  v !== "Select a player" && !tempPlayers.includes(v)}
+    ).map(playerData => ({value: playerData.name, label: playerData.name, idx: i}) ));
+        return dropdownObject;
+    }
+
+    const handleSelectPlayer = (obj, itemAffected) => {
+        const copyTempPlayers = [...tempPlayers];
+        let changeValue = true;
+        if(itemAffected.action !== 'clear'){
+            for (let i = 0; i < copyTempPlayers.length; i++){
+                if (obj.value !== "Select a player" && copyTempPlayers[i] === obj.value) {
+                    changeValue = false;
+                    break;
+                }
+            }
+        }
+        if (changeValue){
+            if(obj)
+                copyTempPlayers[obj.idx] = obj.value;
+            else
+                copyTempPlayers[itemAffected.removedValues[0].idx] = "Select a player";
+            setTempPlayers(copyTempPlayers);
+        }
+    }
     
     return (
         <>
@@ -220,18 +244,21 @@ const NewGame = () => {
                                     <Modal.Title>Edit Players</Modal.Title>
                                 </Modal.Header>
                                 <Modal.Body id="selectPlayersModelBody">
-                                        {tempPlayers.map((player, idx) => (
-                                            <Form.Group className="mb-3" controlId={"formPlayer" + idx}>
-                                                <Form.Select key={idx} value={player} onChange={(e) => handleChange(e, idx)} aria-label='Select players'>
-                                                    <option value="Select a player">Select a player</option>
-                                                    {data.players.map(playerData => (
-                                                        <option key={playerData.name} value={playerData.name}>
-                                                            {playerData.name}
-                                                        </option>
-                                                    ))}
-                                                </Form.Select>
-                                            </Form.Group>
-                                        ))}
+                                    {tempPlayers.map((player, idx) => (
+                                        <Form.Group className="mb-2" controlId={"formPlayer" + idx} key={"formPlayer" + idx}>
+                                            <CreatableSelect
+                                                aria-label='Select players'
+                                                isClearable
+                                                onCreateOption={(e,a) => handleCreateNewPlayer(e,a)}
+                                                onChange={(newValue, PopValueActionMeta) => handleSelectPlayer(newValue, PopValueActionMeta)}
+                                                options= {selectPlayerList(idx)}
+                                                //setValue={player}
+                                                defaultValue={{ label: player, value: player, idx: idx }}
+                                                name={player}
+                                                placeholder='Select a player'
+                                            />
+                                        </Form.Group>
+                                    ))}
                                 </Modal.Body>
                                 <Modal.Footer>
                                     <Button onClick={handleFormToggle}>Close</Button>
@@ -252,7 +279,7 @@ const NewGame = () => {
                     
                             <Form>
                                 <Modal.Body>
-                                    <Form.Group className="mb-3" controlId="formPassword">
+                                    <Form.Group className="mb-2" controlId="formPassword">
                                         <Form.Label>Team Password</Form.Label>
                                         <Form.Control type="password" placeholder="Password" onChange={(e) => setSecret(e.target.value)} required/>
                                         {/* <input id="secret" type="password" name="secret" value={secret} /> */}
@@ -270,75 +297,64 @@ const NewGame = () => {
                 
                 <Container className={`${formToggle ? "blurred" : ""}`}>
                     <Row><Col><NavBar teamName={teamName}/></Col></Row>
-                    <Row className='text-center' xs={1}>
-                        <Col className='mb-3 d-grid' md={12}>
-                            <Button onClick={handlePopupToggle}>Submit Stats</Button>
-                        </Col>
-                    </Row>
-                    <Row><Col>
-                        <h2 className='text-primary'>Offense:</h2>
-                    </Col></Row>
-                    <Row className='text-center' xs={3}>
-                        <Col className='mb-3 d-grid'>
+                    <Row className='justify-content-center' xs={2} md={4}>
+                        <Col className='mb-2 d-grid px-2'>
                             <Button onClick={handleFormToggle}>Lineup</Button>
                         </Col>
-                        <Col className='mb-3 d-grid'>
+                        <Col className='mb-2 d-grid px-2'>
                             <Button className="layout" onClick={handleLayout}>{layout ? "2" : "1"}</Button>
                         </Col>
-                        <Col className='mb-3 d-grid'>
+                        <Col className='mb-2 d-grid px-2'>
                             <Button className="toggle" onClick={handleToggle}>{toggle ? "Auto" : "Manual"}</Button>
+                        </Col>
+                        <Col className='mb-2 d-grid px-2'>
+                            <Button variant='success' onClick={handlePopupToggle}>Submit Stats</Button>
                         </Col>
                     </Row>
                     <Row>
                         {players.map((player, idx) => (
-                            <Col xs={ layout ? "6" : "12"} className={`mb-3  ${(players[selectedPlayerIdx] !== "Select a player" && player === players[selectedPlayerIdx]) ? "selected" : ""} ${player === "Select a player" ? "hidden" : ""}`} key={idx}>
-                                <label className='playerLabel' htmlFor={player}>
-                                    <Card className={`mb-3 ${(players[selectedPlayerIdx] !== "Select a player" && player === players[selectedPlayerIdx]) ? "selectedPlayer" : ""}`}>
-                                        <Card.Body>
-                                            <Card.Title>{player}</Card.Title>
-                                            <ListGroup>
-                                                <ListGroup.Item className="player-average">{average[idx][0]}/{average[idx][1]}</ListGroup.Item>
-                                                <ListGroup.Item className="player-rbis">{rbis[idx]} {layout ? "" : "RBI's"}</ListGroup.Item>
-                                                <ListGroup.Item className={gameStats[idx].length ? "" : 'hidden'}>{gameStats[idx].join(", ")}</ListGroup.Item>
-                                            </ListGroup>
-                                        </Card.Body>
-                                    </Card>
+                            <Col xs={ layout ? "6" : "12"} className={`mb-2 px-2 ${(players[selectedPlayerIdx] !== "Select a player" && player === players[selectedPlayerIdx]) ? "selected" : ""} ${player === "Select a player" ? "hidden" : ""}`} key={'selected' + idx}>
+                                <label className={`${(players[selectedPlayerIdx] !== "Select a player" && player === players[selectedPlayerIdx]) ? "selectedPlayer" : "notSelectedPlayer"}`} htmlFor={player}>
+                                    <ListGroup horizontal>
+                                        <ListGroup.Item className={`lineupListGroupItem ${(layout ? 'px-2' : '')}`}>{layout ? player.substring(0,4) : player}</ListGroup.Item>
+                                        <ListGroup.Item className={`lineupListGroupItem ${(layout ? 'px-2' : '')}`}>{average[idx][0]}/{average[idx][1]}</ListGroup.Item>
+                                        <ListGroup.Item className={`lineupListGroupItem ${(layout ? 'px-2' : '')}`}>{rbis[idx]} {layout ? "" : "RBI's"}</ListGroup.Item>
+                                    </ListGroup>
+                                    <ListGroup> 
+                                        <ListGroup.Item className='lineupListGroupItemBottom'>{gameStats[idx].length ? gameStats[idx].join(", ") : 'No Bats Yet'}</ListGroup.Item>
+                                    </ListGroup>
                                 </label>
                             </Col>
                         ))}
                     </Row>
-                    <Row className='justify-content-center' xs={2} lg={5}>
+                    <Row className='justify-content-center' xs={2} md={4}>
                         {goodButtons.map((btn) => (
-                            <Col className='d-grid'>
-                                <Button className="mb-3" key={btn} value={btn} onClick={handleClick}>{btn}</Button>
+                            <Col className='d-grid px-2' key={btn}>
+                                <Button className="mb-2" value={btn} onClick={handleClick}>{btn}</Button>
                             </Col>
                         ))}
                     </Row>
-                    <Row className='justify-content-center' xs={2} lg={5}>
-                        <Col className='d-grid'>
-                            <Button className="mb-3" value="RBI+" onClick={handleClick}>RBI+</Button>
+                    <Row className='justify-content-center' xs={2} md={4}>
+                        <Col className='d-grid px-2'>
+                            <Button className="mb-2" value="RBI+" onClick={handleClick}>RBI+</Button>
                         </Col>
-                        <Col className='d-grid'>
-                            <Button className="mb-3" variant="warning" value="RBI-" onClick={handleClick}>RBI-</Button>
+                        <Col className='d-grid px-2'>
+                            <Button className="mb-2" variant="warning" value="RBI-" onClick={handleClick}>RBI-</Button>
                         </Col>
                         {badButtons.map((btn) => (
-                            <Col className='d-grid' key={btn} >
-                                <Button className="mb-3" variant="danger" value={btn} onClick={handleClick}>{btn}</Button>
+                            <Col className='d-grid px-2' key={btn} >
+                                <Button className="mb-2" variant="danger" value={btn} onClick={handleClick}>{btn}</Button>
                             </Col>
                         ))}
                     </Row>
-                    <Row className='justify-content-center' xs={2} lg={5}>
-                        <Col className='d-grid'>
-                            <Button className="mb-3 delete-Button" variant='warning' onClick={handleDelete}>Delete Stat</Button>
+                    <Row className='justify-content-center' xs={2} md={4}>
+                        <Col className='d-grid px-2'>
+                            <Button className="mb-2 delete-Button" variant='warning' onClick={handleDelete}>Delete Stat</Button>
                         </Col>
                     </Row>
-                    <Row className='justify-content-center' xs={12}>
-                        <Col className='d-grid'>
-                            {players.map((player, idx) => (
-                                <input key={idx} id={player} type="radio" name="selector" className='hidden' value={idx} checked={player === players[selectedPlayerIdx]} onChange={handleRadioChange} />
-                            ))}
-                        </Col>
-                    </Row>
+                    {players.map((player, idx) => (
+                        <input key={'radio' + idx} id={player} type="radio" name="selector" className='hidden' value={idx} checked={player === players[selectedPlayerIdx]} onChange={handleRadioChange} />
+                    ))}
                 </Container>
             </>)}
         </>

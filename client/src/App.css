@@ -14,11 +14,21 @@
 }
 
 .selectedPlayer {
-    border: 5px;
+    border: 2px;
     border-radius: 6px;
     border-style: solid;
 }
 
-.playerLabel{
+.notSelectedPlayer, .selectedPlayer, .lineupListGroupItem{
     width: 100%;
+}
+
+.lineupListGroupItem{
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+.lineupListGroupItemBottom{
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
 }
