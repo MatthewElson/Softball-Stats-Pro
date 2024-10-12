@@ -26,7 +26,7 @@ const MenuPage = () => {
                     <Button onClick={() => navigate(`/team-stats/${teamName}`)}>View Team Stats</Button>
                 </Col>
                 <Col className="mb-3 d-grid">
-                    <Button onClick={() => navigate('/')}>Return</Button>
+                    <Button onClick={() => navigate('/')}>Log Out</Button>
                 </Col>
             </Row>
         </Container>

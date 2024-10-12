@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { db } from "./firebase";
+import { db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
-import NavBar from './NavBar';
+import NavBar from '../Components/NavBar';
 import Container from 'react-bootstrap/Container';
+import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -36,14 +37,14 @@ const TeamStats = () => {
                     <NavBar teamName={teamName}/>
                 </Col></Row>
                 <Row><Col>
-                <button className="ut-button" onClick={() => setView(prev => !prev)}>Change View</button>
+                    <Button className="ut-button mb-2" onClick={() => setView(prev => !prev)}>Change View</Button>
                 </Col></Row>
                 {view ? (
                     <Row><Col>
                         <Table striped bordered hover responsive size="sm">
                             <thead>
                                 <tr>
-                                    <th style={{textAlign: "left"}}>Player</th>
+                                    <th>Player</th>
                                     <th>G</th>
                                     <th>AB</th>
                                     <th>H</th>
@@ -55,12 +56,13 @@ const TeamStats = () => {
                                     <th>K</th>
                                     <th>AVG</th>
                                     <th>OBP</th>
+                                    <th>OPS</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {data.players.map((player, idx) => (
-                                    <tr key={idx}>
-                                        <td style={{textAlign: "left"}}>{player.name}</td>
+                                    <tr key={"stats_" + idx}>
+                                        <td>{player.name}</td>
                                         <td>{player.games}</td>
                                         <td>{player.singles + player.doubles + player.triples + player.homeruns + player.strikeouts + player.outs}</td>
                                         <td>{player.singles + player.doubles + player.triples + player.homeruns}</td>
@@ -84,7 +86,12 @@ const TeamStats = () => {
                             <thead>
                                 <tr>
                                     <th>Player</th>
-
+                                    <th>G</th>
+                                    <th>AB</th>
+                                    <th>H</th>
+                                    <th>2B</th>
+                                    <th>3B</th>
+                                    <th>HR</th>
                                 </tr>
                             </thead>
                             <tbody>
