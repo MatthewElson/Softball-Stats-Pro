@@ -78,6 +78,11 @@ body{
     height: 100% !important;
 }
 
+.list-group.list-group-flush{
+    min-height: 40px;
+}
+
+
 @media screen and (max-width: 500px) {
     .nav.nav-tabs > .nav-item > .nav-link {
         padding: 4px 8px !important;

@@ -13,7 +13,7 @@ import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 
 
-const EditPlayers = ({ lineupToggle, setLineupToggle, handleSubmitForm, allPlayers}) => {
+const EditPlayers = ({ lineupToggle, setLineupToggle, handleSubmitForm, allPlayers, setAllPlayers}) => {
     const [lineupCards, setLineupCards] = useState([]);
     // console.log('lineupCards :', lineupCards);
     const playerRoster = []; 
@@ -30,7 +30,7 @@ const EditPlayers = ({ lineupToggle, setLineupToggle, handleSubmitForm, allPlaye
                     </Modal.Header>
                     <Modal.Body id="selectPlayersModelBody">
                         <DndProvider backend={HTML5Backend}>
-                            <DndRosterContainer lineupCards={lineupCards} setLineupCards={setLineupCards} playersList={allPlayers}/>
+                            <DndRosterContainer lineupCards={lineupCards} setLineupCards={setLineupCards} allPlayers={allPlayers} setAllPlayers={setAllPlayers}/>
                         </DndProvider>
                     </Modal.Body>
                     <Modal.Footer>

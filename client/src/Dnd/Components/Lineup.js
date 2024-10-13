@@ -1,18 +1,31 @@
-import { useCallback, memo } from 'react';
+import React, { useCallback, memo } from 'react';
 import { useDrop, useDrag } from 'react-dnd';
 import ItemTypes from '../Types/NewGameTypes';
 import update from 'immutability-helper';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Badge from 'react-bootstrap/Badge';
 
-function Lineup ({ lineupCards }) {
+function Lineup ({ lineupCards, setFunction, removeFunction }) {
+  const { drop, backgroundColor, isActive } = useDndDrop([ItemTypes.ROSTER, ItemTypes.SUB], 'lineup')
+  // player, setFunction, removeFunction, idx
+  return (
+      <Badge className='maxHeight' bg={backgroundColor} ref={drop} variant="success" data-testid="lineup">
+          <p>{isActive ? 'Release to add player' : 'Drag a player here'}</p>
+          <ListGroup variant="flush" style={{ overflow: 'hidden', clear: 'both' }}>
+            {lineupCards.map( (player, idx) => <PlayerPlaying key={"playerInLineup" + idx} player={player} setFunction={setFunction} removeFunction={removeFunction} idx={"Sub_" + idx} type={ItemTypes.LINEUP} testid={'lineup'}/>)}
+          </ListGroup>
+      </Badge>
+  )
+};
+
+function useDndDrop(accepts, name) {
   const [{ canDrop, isOver }, drop] = useDrop(() => ({
-      accept: [ItemTypes.ROSTER, ItemTypes.SUB],
-      drop: () => ({ name: 'lineup' }),
-      collect: (monitor) => ({
-        isOver: monitor.isOver(),
-        canDrop: monitor.canDrop(),
-      })
+    accept: accepts,
+    drop: () => ({ name: name }),
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop(),
+    })
   }));
 
   const isActive = canDrop && isOver;
@@ -22,19 +35,11 @@ function Lineup ({ lineupCards }) {
   else if (canDrop)
     backgroundColor = 'success';
 
-  return (
-      <Badge className='maxHeight' bg={backgroundColor} ref={drop} variant="success" data-testid="lineup">
-          <p>{isActive ? 'Release to add player' : 'Drag a player here'}</p>
-          <ListGroup variant="flush" style={{ overflow: 'hidden', clear: 'both' }}>
-            {lineupCards.map( (player, idx) => {
-              return <Sub key={"playerInLineup" + idx} id={"Sub_" + idx} player={player}/>
-            })}
-          </ListGroup>
-      </Badge>
-  )
-};
+  return {drop, backgroundColor, isActive}
+}
 
-function DndFunctionality(type, item, setFunction, removeFunction, idx){
+
+function useDndDrag(type, item, setFunction, removeFunction, idx){
   const [{ isDragging }, drag] = useDrag(() => ({
     type: type,
     item: item,
@@ -45,9 +50,10 @@ function DndFunctionality(type, item, setFunction, removeFunction, idx){
         console.log('item :', item);
         // setLineupCards([...lineupCards, item]);
         setFunction((prev) => update(prev, {$push:[item]}));
-
-        if(removeFunction)
-          removeFunction((prev) => update(prev, {[idx]:{$set: {}}}) );
+        removeFunction((prev) => {
+          console.log('test');
+          return update(prev, {[idx]:{$set: {}}});
+        });
       }
     },
     collect: (monitor) => ({
@@ -59,25 +65,27 @@ function DndFunctionality(type, item, setFunction, removeFunction, idx){
   return { drag, opacity };
 }
 
-
-function Player({ player, setLineupCards, setRosterCards, idx}) {
-  const {drag, opacity} = DndFunctionality(ItemTypes.ROSTER, player, setLineupCards, setRosterCards, idx);
-
+function PlayerPlaying({player, setFunction, removeFunction, idx, type, name}) {
+  const {drag, opacity} = useDndDrag(type, player, setFunction, removeFunction, idx);
+  const { drop } = useDndDrop([ItemTypes.ROSTER, ItemTypes.SUB], 'lineup');
+  let callbackRef = React.useCallback(
+    element => {
+      mergeRefs([drag, drop], element);
+    },
+    [drag, drop]
+  );
   return (
-    <ListGroup.Item ref={drag} style={{ opacity }} data-testid={`player`}>
+    <ListGroup.Item ref={callbackRef} style={{ opacity }} data-testid={name}>
       {player.name}
     </ListGroup.Item>
   )
 }
 
-//id={idx} setLineupCards={setLineupCards} subsCards={subsCards} setSubsCards={setSubsCards} player={player}
-function Sub({player, setLineupCards, setSubsCards, idx }) {
-      const {drag, opacity} = DndFunctionality(ItemTypes.SUB, player, setLineupCards, setSubsCards, idx);
-      return (
-        <ListGroup.Item ref={drag} style={{ opacity }} data-testid={`sub`}>
-          {player.name}
-        </ListGroup.Item>
-      )
+function mergeRefs(refs, element) {
+  refs.forEach(ref => {
+    if (typeof ref === "function") ref(element);
+    else if (ref != null) ref.current = element;
+  });
 }
 
-export {Lineup, Player, Sub};
+export {Lineup, PlayerPlaying, useDndDrop};
