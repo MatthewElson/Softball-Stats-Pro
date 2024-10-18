@@ -17,11 +17,11 @@ const DndRosterContainer = ({lineupCards, setLineupCards, allPlayers, setAllPlay
     // const { drop, backgroundColor, isActive } = useDndDrop(ItemTypes.LINEUP, 'Sub');
     
     const PlayersInTabs = ({cards, setFunction, removeFunction, type, name}) => {
-      const { drop, backgroundColor } = useDndDrop(ItemTypes.LINEUP, 'bench');
+      const { drop, backgroundColor } = useDndDrop(ItemTypes.LINEUP, 'bench', 'white');
       const capitalName = name.charAt(0).toUpperCase() + name.slice(1);
       return (
-        <Card>
-          <ListGroup variant="flush" ref={drop} style={{ overflow: 'hidden', clear: 'both', backgroundColor: {backgroundColor}}}>
+        <Card style={{ overflow: 'hidden', clear: 'both'}} bg={backgroundColor}>
+          <ListGroup variant="flush" ref={drop}>
             {cards.map( (player,idx) => !Object.keys(player).length ? null : <PlayerPlaying key={capitalName + "Bench" + idx} player={player} setFunction={setFunction} removeFunction={removeFunction} idx={idx} type={type} name={name} /> )}
           </ListGroup>
         </Card>
@@ -34,7 +34,7 @@ const DndRosterContainer = ({lineupCards, setLineupCards, allPlayers, setAllPlay
           <Col xs={6} className='maxHeight'>
             {/* <div ref={drop} style={{ overflow: 'hidden', clear: 'both' }}> */}
             <Card id="lineup" className='maxHeight' style={{height: '100%', overflow: 'hidden', clear: 'both' }}>
-              <Lineup lineupCards={lineupCards} setFunction={setAllPlayers} removeFunction={setLineupCards}/>
+              <Lineup lineupCards={lineupCards} setFunction={[setRosterCards, setSubsCards]} removeFunction={setLineupCards}/>
               {/* <Lineup findCard={findCard} moveCard={moveCard}/> */}
             </Card>
           </Col>
