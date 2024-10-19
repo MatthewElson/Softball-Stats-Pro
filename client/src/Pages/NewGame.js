@@ -34,6 +34,7 @@ const NewGame = () => {
     const [data, setData] = useState({});
     const [loading, setLoading] = useState(true);
     const [allPlayers, setAllPlayers] = useState();
+    const [lineupCards, setLineupCards] = useState([]);
 
     useEffect(() => {
         const func = async () => {
@@ -121,10 +122,6 @@ const NewGame = () => {
     //     setLineupToggle((prev) => !prev);
     // }
 
-    // const handlePopupToggle = () => {
-    //     setPopupToggle(prev => !prev);
-    // }
-
     // const handleCreateNewPlayerToggle = () =>{
     //     setCreateNewPlayerToggle(prev => !prev);
     // }
@@ -156,12 +153,12 @@ const NewGame = () => {
     //     // setData(data);
     // }
 
-    const CreateNewPlayer = ({playerName, idx}) => <CreateNewPlayer createNewPlayerToggle playerName={playerName} handleCreateNewPlayer idx={idx}/>
+    // const CreateNewPlayer = ({playerName, idx}) => <CreateNewPlayer createNewPlayerToggle playerName={playerName} handleCreateNewPlayer idx={idx}/>
 
     const handleSubmitForm = (e) => {
         e.preventDefault();
         Globals.toggleCB(setLineupToggle);
-        setPlayers(tempPlayers);
+        setPlayers(lineupCards);
     }
 
     // const handleLayout = () => {
@@ -260,14 +257,14 @@ const NewGame = () => {
         <>
             {loading ? (<><h1 className="loading">Loading Stats...</h1><NavBar teamName={teamName}/></>) : (
             <>
-                {lineupToggle && <EditPlayers lineupToggle={lineupToggle} setLineupToggle={setLineupToggle} handleSubmitForm={handleSubmitForm} allPlayers={allPlayers} setAllPlayers={setAllPlayers} />}
+                {lineupToggle && <EditPlayers lineupToggle={lineupToggle} setLineupToggle={setLineupToggle} handleSubmitForm={handleSubmitForm} allPlayers={allPlayers} setAllPlayers={setAllPlayers} lineupCards={lineupCards} setLineupCards={setLineupCards}/>}
                 {/* {createNewPlayerToggle && (
                     <div className="modal show grayBack" style={{ display: 'block', position: 'initial' }}>
                         <CreateNewPlayer playerName={playerName}/>
                     </div>
                 )} */}
 
-                {popupToggle && <SubmitStats popupToggle handlePopupToggle setSecret />}
+                {popupToggle && <SubmitStats popupToggle setPopupToggle setSecret />}
                         
                 <Container className={`${lineupToggle ? "blurred" : ""}`}>
                     <Row><Col><NavBar teamName={teamName}/></Col></Row>
@@ -292,9 +289,9 @@ const NewGame = () => {
                     <Row>
                         {players.map((player, idx) => (
                             <Col xs={ layout ? "6" : "12"} className={`mb-2 px-2 ${(players[selectedPlayerIdx] !== selectPlayerText && player === players[selectedPlayerIdx]) ? "selected" : ""} ${player === selectPlayerText ? "hidden" : ""}`} key={'selected_' + idx}>
-                                <label className={`${(players[selectedPlayerIdx] !== selectPlayerText && player === players[selectedPlayerIdx]) ? "selectedPlayer" : "notSelectedPlayer"}`} htmlFor={player}>
+                                <label className={`${(players[selectedPlayerIdx] !== selectPlayerText && player === players[selectedPlayerIdx]) ? "selectedPlayer" : "notSelectedPlayer"}`} htmlFor={player.name}>
                                     <ListGroup horizontal>
-                                        <ListGroup.Item className={`lineupListGroupItem ${(layout ? 'px-2' : '')}`}>{layout ? player.substring(0,4) : player}</ListGroup.Item>
+                                        <ListGroup.Item className={`lineupListGroupItem ${(layout ? 'px-2' : '')}`}>{layout ? player.name?.substring(0,4) : player.name}</ListGroup.Item>
                                         <ListGroup.Item className={`lineupListGroupItem ${(layout ? 'px-2' : '')}`}>{average[idx][0]}/{average[idx][1]}</ListGroup.Item>
                                         <ListGroup.Item className={`lineupListGroupItem ${(layout ? 'px-2' : '')}`}>{rbis[idx]} {layout ? "" : "RBI's"}</ListGroup.Item>
                                     </ListGroup>
@@ -334,8 +331,8 @@ const NewGame = () => {
                         </Row>
                     </>
                     )}
-                    {players.map((player, idx) => (
-                        <input key={'radio_' + idx} id={player} type="radio" name="selector" className='hidden' value={idx} checked={player === players[selectedPlayerIdx]} onChange={handleRadioChange} />
+                    {lineupCards.map((player, idx) => (
+                        <input key={'radio_' + idx} id={player.name} type="radio" name="selector" className='hidden' value={idx} checked={player?.name === players[selectedPlayerIdx]?.name} onChange={handleRadioChange} />
                     ))}
                 </Container>
             </>)}

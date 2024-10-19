@@ -9,13 +9,7 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
 
-const EditPlayers = ({ lineupToggle, setLineupToggle, handleSubmitForm, allPlayers, setAllPlayers}) => {
-    const [lineupCards, setLineupCards] = useState([]);
-    // console.log('lineupCards :', lineupCards);
-    const playerRoster = [];
-    const playerSubs = [];
-    allPlayers.forEach(player => player.isSub ? playerSubs.push(player) : playerRoster.push(player));
-
+const EditPlayers = ({ lineupToggle, setLineupToggle, handleSubmitForm, allPlayers, setAllPlayers, lineupCards, setLineupCards}) => {
     return (
         <div className='modal show' style={{ display: 'block', position: 'initial' }}>
             <Modal id="selectPlayersModal" show={lineupToggle} onHide={() => Globals.toggleCB(setLineupToggle)}>
@@ -30,7 +24,7 @@ const EditPlayers = ({ lineupToggle, setLineupToggle, handleSubmitForm, allPlaye
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="success" type='submit'>
-                            Save Edit
+                            Save
                         </Button>
                         <Button variant="secondary" onClick={() => Globals.toggleCB(setLineupToggle)}>
                             Cancel

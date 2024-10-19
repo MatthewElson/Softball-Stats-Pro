@@ -10,8 +10,19 @@ import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 
 const DndRosterContainer = ({lineupCards, setLineupCards, allPlayers, setAllPlayers}) => {
-    const roster = allPlayers.filter(player => Object.keys(player).length && !player.isSub);
-    const subs = allPlayers.filter(player => player.isSub);
+
+  const roster = allPlayers.filter(player => {
+      const lineupCardHasPlayerName = lineupCards.some(lineupCard => lineupCard.name === player.name);
+      if(!lineupCardHasPlayerName)
+        return Object.keys(player).length && !player.isSub;
+      return null;
+    });
+    const subs = allPlayers.filter(player => {
+      const lineupCardHasPlayerName = lineupCards.some(lineupCard => lineupCard.name === player.name);
+      if(!lineupCardHasPlayerName)
+        return player.isSub;
+      return null;
+    });
     const [rosterCards, setRosterCards] = useState(roster);
     const [subsCards, setSubsCards] = useState(subs);
     // const { drop, backgroundColor, isActive } = useDndDrop(ItemTypes.LINEUP, 'Sub');

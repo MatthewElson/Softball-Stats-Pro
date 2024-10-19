@@ -3,11 +3,12 @@ import React  from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
+import Globals from '../Globals';
 
-const SubmitStats = ({popupToggle, handlePopupToggle, setSecret}) => {
+const SubmitStats = ({popupToggle, setPopupToggle, setSecret}) => {
     return (
         <div className="modal show" style={{ display: 'block', position: 'initial' }} >
-            <Modal show={popupToggle} onHide={handlePopupToggle}>
+            <Modal show={popupToggle} onHide={() => Globals.toggleCB(setPopupToggle)}>
                 <Modal.Header closeButton>
                 <Modal.Title>Submit Stats</Modal.Title>
                 </Modal.Header>
@@ -22,7 +23,7 @@ const SubmitStats = ({popupToggle, handlePopupToggle, setSecret}) => {
                     </Modal.Body>
             
                     <Modal.Footer>
-                        <Button variant="danger" onClick={handlePopupToggle}>Close</Button>
+                        <Button variant="danger" onClick={() => Globals.toggleCB(setPopupToggle)}>Close</Button>
                         <Button type="submit" variant="success">Submit Stats</Button>
                     </Modal.Footer>
                 </Form>
