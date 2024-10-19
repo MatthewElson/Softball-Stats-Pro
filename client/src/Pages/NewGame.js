@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 import { db } from "../firebase";
-import { doc, updateDoc, getDoc, arrayUnion} from "firebase/firestore";
+import { doc, updateDoc, getDoc} from "firebase/firestore";
 // import CloseButton from 'react-bootstrap/CloseButton';
 import Button from 'react-bootstrap/Button';
 import NavBar from '../Components/NavBar';
@@ -17,7 +17,6 @@ const NewGame = () => {
     const selectPlayerText = "Select a player";
     const { teamName } = useParams();
     const [players, setPlayers] = useState([selectPlayerText, selectPlayerText, selectPlayerText, selectPlayerText, selectPlayerText, selectPlayerText, selectPlayerText, selectPlayerText, selectPlayerText, selectPlayerText])
-    // const [playerName, setPlayerName] = useState("");
     const [tempPlayers, setTempPlayers] = useState(players);
     const [gameStats, setGameStats] = useState([[], [], [], [], [], [], [], [], [], []]);
     const [rbis, setRbis] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
@@ -26,7 +25,6 @@ const NewGame = () => {
     const [toggle, setToggle] = useState(false);
     const [lineupToggle, setLineupToggle] = useState(true);
     const [popupToggle, setPopupToggle] = useState(false);
-    // const [createNewPlayerToggle, setCreateNewPlayerToggle] = useState(false);
     const [layout, setLayout] = useState(true)
     const [secret, setSecret] = useState("");
     const goodButtons = ["Single", "Double", "Triple", "Homerun"]
@@ -114,56 +112,11 @@ const NewGame = () => {
         }
     }
 
-    // const handleToggle = () => {
-    //     setToggle((prev) => !prev);
-    // }
-
-    // const handleLineupToggle = () => {
-    //     setLineupToggle((prev) => !prev);
-    // }
-
-    // const handleCreateNewPlayerToggle = () =>{
-    //     setCreateNewPlayerToggle(prev => !prev);
-    // }
-
-    // const handleCreateNewPlayer = async (inputValue, idx) => {
-    //     handleCreateNewPlayerToggle();
-    //     setPlayerName(inputValue);
-    //     // const docRef = doc(db, "teams", teamName);
-    //     // await updateDoc(docRef, {
-    //     //     players: arrayUnion({
-    //     //         name: inputValue,
-    //     //         singles: 0,
-    //     //         doubles: 0,
-    //     //         triples: 0,
-    //     //         homeruns: 0,
-    //     //         outs: 0,
-    //     //         strikeouts: 0,
-    //     //         rbis: 0,
-    //     //         games: 0,
-    //     //         sbs:0,
-    //     //         walks: 0,
-    //     //     })
-    //     // });
-
-    //     // const copyTempPlayers = [...tempPlayers];
-    //     // copyTempPlayers[idx] = inputValue;
-    //     // setTempPlayers(copyTempPlayers);
-    //     // handleSelectPlayer({ label: inputValue, value: inputValue, idx: idx }, { action: 'manual insert' });
-    //     // setData(data);
-    // }
-
-    // const CreateNewPlayer = ({playerName, idx}) => <CreateNewPlayer createNewPlayerToggle playerName={playerName} handleCreateNewPlayer idx={idx}/>
-
     const handleSubmitForm = (e) => {
         e.preventDefault();
         Globals.toggleCB(setLineupToggle);
         setPlayers(lineupCards);
     }
-
-    // const handleLayout = () => {
-    //     setLayout(prev => !prev)
-    // }
     
     const handleSubmitStats = async (e) => {
         e.preventDefault();
@@ -258,12 +211,6 @@ const NewGame = () => {
             {loading ? (<><h1 className="loading">Loading Stats...</h1><NavBar teamName={teamName}/></>) : (
             <>
                 {lineupToggle && <EditPlayers lineupToggle={lineupToggle} setLineupToggle={setLineupToggle} handleSubmitForm={handleSubmitForm} allPlayers={allPlayers} setAllPlayers={setAllPlayers} lineupCards={lineupCards} setLineupCards={setLineupCards}/>}
-                {/* {createNewPlayerToggle && (
-                    <div className="modal show grayBack" style={{ display: 'block', position: 'initial' }}>
-                        <CreateNewPlayer playerName={playerName}/>
-                    </div>
-                )} */}
-
                 {popupToggle && <SubmitStats popupToggle setPopupToggle setSecret />}
                         
                 <Container className={`${lineupToggle ? "blurred" : ""}`}>
