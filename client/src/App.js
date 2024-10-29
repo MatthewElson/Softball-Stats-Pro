@@ -1,10 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LoginPage from './LoginPage';
-import MenuPage from './MenuPage';
-import NewGame from './NewGame';
-import TeamStats from './TeamStats';
-import ManageTeam from './ManageTeam';
-import './App.css';
+import LoginPage from './Pages/LoginPage';
+import MenuPage from './Pages/MenuPage';
+import NewGame from './Pages/NewGame';
+import TeamStats from './Pages/TeamStats';
+import ManageTeam from './Pages/ManageTeam';
 
 function App() {
   return (

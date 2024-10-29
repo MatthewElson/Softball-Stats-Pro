@@ -3,22 +3,22 @@ import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 
-function Navigation( { teamName }) {
+function Navigation( { teamName, pageName }) {
   return (
     <Navbar expand="lg">
       <Container>
-        {MenuItems(teamName)}
+        {MenuItems(teamName, pageName)}
       </Container>
     </Navbar>
   );
 }
 
-function MenuItems(teamName) {
+function MenuItems(teamName, pageName) {
   return (
     <>
         <Navbar key={'xs'} expand={'xs'}>
           <Container fluid>
-            <Navbar.Brand><span className='text-primary'><h1>{teamName}</h1></span></Navbar.Brand>
+            <Navbar.Brand><span className='text-primary'><h1>{pageName ? pageName : teamName}</h1></span></Navbar.Brand>
             <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-xs`} />
             <Navbar.Offcanvas
               id={`offcanvasNavbar-expand-xs`}
