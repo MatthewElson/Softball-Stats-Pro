@@ -8,24 +8,28 @@ import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import ToggleButton from 'react-bootstrap/ToggleButton';
+
 
 const TeamStats = () => {
 
     const { teamName } = useParams();
-    const [data, setData] = useState({});
+    const [players, setPlayers] = useState({});
     const [loading, setLoading] = useState(true);
     const [view, setView] = useState(false);
+    const [showSubs, setShowSubs] = useState(false);
 
     useEffect(() => {
         const func = async () => {
             const docRef = doc(db, "teams", teamName);
             const docSnap = await getDoc(docRef);
-            setData(docSnap.data());
+            setPlayers(docSnap.data().players.sort());
             setLoading(false);
         }
 
         func();
     }, [teamName]);
+
 
     return (
         <Container>
@@ -38,6 +42,17 @@ const TeamStats = () => {
                 </Col></Row>
                 <Row><Col>
                     <Button className="ut-button mb-2" onClick={() => setView(prev => !prev)}>Change View</Button>
+                    <ToggleButton
+                        id="toggle-show-subs"
+                         className="ut-button mb-2 ms-2"
+                        type="checkbox"
+                        variant="secondary"
+                        checked={showSubs}
+                        value="0"
+                        onChange={(e) => setShowSubs(e.currentTarget.checked)}
+                    >
+                    {showSubs ? "Hide Subs" : "Show Subs"}
+                    </ToggleButton>
                 </Col></Row>
                 {view ? (
                     <Row><Col>
@@ -60,7 +75,7 @@ const TeamStats = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {data.players.map((player, idx) => (
+                                {(showSubs ?  players : players.filter(player => player.isSub === showSubs)).map((player, idx) => (
                                     <tr key={"stats_" + idx}>
                                         <td>{player.name}</td>
                                         <td>{player.games}</td>
@@ -95,7 +110,7 @@ const TeamStats = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {data.players.map((pl, idx) => (
+                                {(showSubs ?  players : players.filter(player => player.isSub === showSubs)).map((pl, idx) => (
                                     <tr key={idx + 'T1'}>
                                         <td>{pl.name}</td>
                                         <td>{pl.games}</td>
@@ -121,7 +136,7 @@ const TeamStats = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {data.players.map((pl, idx) => (
+                                {(showSubs ?  players : players.filter(player => player.isSub === showSubs)).map((pl, idx) => (
                                     <tr key={idx + 'T2'}>
                                         <td>{pl.name}</td>
                                         <td>{pl.games}</td>
@@ -148,7 +163,7 @@ const TeamStats = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {data.players.map((pl, idx) => (
+                                {(showSubs ?  players : players.filter(player => player.isSub === showSubs)).map((pl, idx) => (
                                     <tr key={idx + 'T2'}>
                                         <td>{pl.name}</td>
                                         <td>{pl.games}</td>

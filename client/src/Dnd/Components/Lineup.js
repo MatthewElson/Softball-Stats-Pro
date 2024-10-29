@@ -4,17 +4,20 @@ import ItemTypes from '../Types/NewGameTypes';
 import update from 'immutability-helper';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Badge from 'react-bootstrap/Badge';
+import Card from 'react-bootstrap/Card';
 
 function Lineup ({ lineupCards, setFunction, removeFunction }) {
   const { drop, backgroundColor, isActive } = useDndDrop([ItemTypes.ROSTER, ItemTypes.SUB], 'lineup','white')
   // player, setFunction, removeFunction, idx
   return (
-      <Badge className='maxHeight' bg={backgroundColor} ref={drop} variant="success" data-testid="lineup">
+    <Card id="lineup" className='minHeight100 fillAvailable' ref={drop} variant="success" data-testid="lineup">
+      <Badge className='minHeight100 fillAvailable' bg={backgroundColor}>
           <p>{isActive ? 'Release to add player' : 'Drag a player here'}</p>
-          <ListGroup variant="flush" style={{ overflow: 'hidden', clear: 'both' }}>
+          <ListGroup variant="flush">
             {lineupCards.map( (player, idx) => <PlayerPlaying key={"playerInLineup" + idx} player={player} setFunction={player.isSub ? setFunction[1] : setFunction[0]} removeFunction={removeFunction} idx={idx} type={ItemTypes.LINEUP} name='lineup' bg='white'/>)}
           </ListGroup>
       </Badge>
+    </Card>
   )
 };
 

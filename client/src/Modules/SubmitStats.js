@@ -5,7 +5,7 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import Globals from '../Globals';
 
-const SubmitStats = ({popupToggle, setPopupToggle, setSecret}) => {
+const SubmitStats = ({popupToggle, setPopupToggle, setSecret, handleSubmitStatsForm}) => {
     return (
         <div className="modal show" style={{ display: 'block', position: 'initial' }} >
             <Modal show={popupToggle} onHide={() => Globals.toggleCB(setPopupToggle)}>
@@ -13,7 +13,7 @@ const SubmitStats = ({popupToggle, setPopupToggle, setSecret}) => {
                 <Modal.Title>Submit Stats</Modal.Title>
                 </Modal.Header>
         
-                <Form>
+                <Form onSubmit={handleSubmitStatsForm}>
                     <Modal.Body>
                         <Form.Group className="mb-2" controlId="formPassword">
                             <Form.Label>Team Password</Form.Label>

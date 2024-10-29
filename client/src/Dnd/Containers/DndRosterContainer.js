@@ -31,8 +31,8 @@ const DndRosterContainer = ({lineupCards, setLineupCards, allPlayers, setAllPlay
       const { drop, backgroundColor } = useDndDrop(ItemTypes.LINEUP, 'bench', 'white');
       const capitalName = name.charAt(0).toUpperCase() + name.slice(1);
       return (
-        <Card style={{ overflow: 'hidden', clear: 'both'}} bg={backgroundColor}>
-          <ListGroup variant="flush" ref={drop}>
+        <Card bg={backgroundColor} className='isFullWidth'>
+          <ListGroup variant="flush" ref={drop} className='isFullHeight isFullWidth'>
             {cards.map( (player,idx) => !Object.keys(player).length ? null : <PlayerPlaying key={capitalName + "Bench" + idx} player={player} setFunction={setFunction} removeFunction={removeFunction} idx={idx} type={type} name={name} /> )}
           </ListGroup>
         </Card>
@@ -40,21 +40,21 @@ const DndRosterContainer = ({lineupCards, setLineupCards, allPlayers, setAllPlay
     }
 
     return (
-      <Container className='maxHeight'>
+      <Container id='createLineupContainer' className='maxHeight'>
         <Row className='maxHeight'>
-          <Col xs={6} className='maxHeight'>
+          <Col xs={6} id='newLineupContainer'>
             {/* <div ref={drop} style={{ overflow: 'hidden', clear: 'both' }}> */}
-            <Card id="lineup" className='maxHeight' style={{height: '100%', overflow: 'hidden', clear: 'both' }}>
+            
               <Lineup lineupCards={lineupCards} setFunction={[setRosterCards, setSubsCards]} removeFunction={setLineupCards}/>
               {/* <Lineup findCard={findCard} moveCard={moveCard}/> */}
-            </Card>
+            
           </Col>
-          <Col>
+          <Col id='playersTabsContainer'>
             <Tabs fill>
-              <Tab className="isATab" eventKey={'roster'} title={'Roster'}>
+              <Tab eventKey={'roster'} title={'Roster'} className='isFullHeight isFullWidth'>
                 <PlayersInTabs cards={rosterCards} setFunction={setLineupCards} removeFunction={setRosterCards} type={ItemTypes.ROSTER} name='roster' />
               </Tab>
-              <Tab className="isATab" eventKey={'subs'} title={'Subs'}>
+              <Tab eventKey={'subs'} title={'Subs'} className='isFullHeight isFullWidth'>
                 <PlayersInTabs cards={subsCards} setFunction={setLineupCards} removeFunction={setSubsCards} type={ItemTypes.SUB} name='subs' />
               </Tab>
             </Tabs>

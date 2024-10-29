@@ -10,11 +10,11 @@ import ToggleButton from 'react-bootstrap/ToggleButton';
 import Toast from 'react-bootstrap/Toast';
 import ToggleCheckboxImage from '../Components/ToggleCheckboxImage';
 
-const AddPlayerToRosterModule = ({setCurrentTask, currentTask, setPlayers, players, teamName}) => {
+const AddPlayerToRoster = ({setCurrentTask, currentTask, setPlayers, players, teamName}) => {
     const [newPlayerName, setNewPlayerName] = useState('');
     const [isSub, setIsSub] = useState(false);
     const [playerAlreadyExists, setPlayerAlreadyExists] = useState(false);
-    const addPlayerToRoster = async (e) => {
+    const addPlayer = async (e) => {
         e.preventDefault();
 
         if(players.find(v => v.name === newPlayerName)){
@@ -46,7 +46,7 @@ const AddPlayerToRosterModule = ({setCurrentTask, currentTask, setPlayers, playe
 
     return (
         <Modal show={currentTask===Globals.taskNumbers.add} onHide={() => {setCurrentTask(Globals.taskNumbers.none)} }>
-            <Form onSubmit={addPlayerToRoster}>
+            <Form onSubmit={addPlayer}>
                 <Modal.Header closeButton>
                     <Modal.Title>Add Player</Modal.Title>
                 </Modal.Header>
@@ -93,4 +93,4 @@ const AddPlayerToRosterModule = ({setCurrentTask, currentTask, setPlayers, playe
     )
 }
 
-export default AddPlayerToRosterModule;
+export default AddPlayerToRoster;

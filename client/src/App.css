@@ -1,24 +1,29 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,100;9..40,200;9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,800;9..40,900&display=swap');
 
-body{
+body {
     min-width: 250px;
 }
 
-#menuContainer{
+#menuContainer {
     max-width:'80%';
 }
 
-#selectPlayersModelBody {
-    height: 80vh;
+#selectPlayersModal{
+    min-width: 300px;
+    min-height: 350px;;
+}
 
+#selectPlayersModelBody {
+    height: 78vh;
+    
     @media screen and (max-height: 750px) {
         height: 72vh;
     }
-
+    
     @media screen and (max-height: 600px) {
         height: 67vh;
     }
-
+    
     @media screen and (max-height: 450px) {
         height: 54vh;
     }
@@ -26,7 +31,7 @@ body{
 	overflow-y: auto;
 }
 
-.hidden{
+.hidden {
     display: none !important;
 }
 
@@ -36,29 +41,41 @@ body{
     border-style: solid;
 }
 
-.notSelectedPlayer, .selectedPlayer, .lineupListGroupItem{
+.notSelectedPlayer, .selectedPlayer, .lineupListGroupItem {
     width: 100%;
 }
 
-.lineupListGroupItem{
+.lineupListGroupItemTop {
     border-bottom-left-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
+    padding: 1% 8px;
+    font-weight: 600;
 }
 
-.lineupListGroupItemBottom{
+.lineupListGroupItem {
+    border-radius: 0 !important;
+    padding: 1% 8px;
+}
+
+.lineupListGroupItemBottom {
     border-top-left-radius: 0 !important;
     border-top-right-radius: 0 !important;
+    padding: 8px 8px;
+    height: 6em;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column-reverse;
 }
 
 .grayBack {
     background-color: gray;
 }
 
-.borderTop{
+.borderTop {
     border-top: 1px solid lightgray;
 }
 
-.bi-person-plus{
+.bi-person-plus {
     height: 100%;
     width: auto;
     margin-left: 0px !important;
@@ -70,21 +87,138 @@ body{
     border-top-right-radius: 0;
 }
 
-#lineup > * {
-    height: 100%;
+.minHeight100{
+    min-height: 100%;
+}
+
+.fillAvailable{
+    height: -webkit-fill-available;
 }
 
 .maxHeight {
     height: 100% !important;
 }
 
-.list-group.list-group-flush{
+.maxWidth {
+    width: 100% !important;
+}
+
+.list-group.list-group-flush {
     min-height: 40px;
 }
 
+#playersTabsContainer {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+}
+
+.tab-content{
+    display: flex;
+}
+
+.tab-content>.active {
+    display: flex;
+}
+
+.isFullWidth{
+    width: 100%;
+}
+
+.isFullHeight, .tab-content{
+    flex: 1 1 auto;
+}
 
 @media screen and (max-width: 500px) {
     .nav.nav-tabs > .nav-item > .nav-link {
         padding: 4px 8px !important;
     }
+
+    #currentBatterRow, #currentBatterCol, .goToPreviousBatter, .goToNextBatter, #selectPlayersModelBody > *, #newLineupContainer, #playersTabsContainer, .currentBatterNav {
+        padding: 0 0.2em;
+    } 
 }
+
+
+
+
+
+#createLineupContainer{
+    padding: 0;
+}
+
+.goToNextBatter, .goToPreviousBatter {
+    height: 100%;
+    width: 100%;
+    max-height: 5em;
+}
+
+#battingPlayersName  {
+    width: 50%;
+    padding: 8px 8px;
+}
+
+#battingPlayersAverage {
+    width: 20%;
+    padding: 8px 2px;
+    display: flex;
+    justify-content: center;
+}
+
+#battingPlayersRBIs {
+    width: 30%;
+    padding: 8px 8px;
+    display: flex;
+    justify-content: end;
+}
+
+#ourScore {
+    width: 40%;
+    padding: 8px 8px;
+}
+
+#theirScore {
+    width: 60%;
+    padding: 8px 8px;
+}
+
+@media screen and (min-width:500px) {
+    #battingPlayersName {
+        width: 40%;
+    }
+    
+    #battingPlayersAverage {
+        width: 25%;
+    }
+    
+    #battingPlayersRBIs {
+        width: 35%;
+    }
+
+    .lineupListGroupItem.list-group-item{
+        padding: 8px;
+    }
+}
+
+@media screen and (max-height: 700px) {
+    .lineupListGroupItemBottom {
+        height: 4em;
+    }
+    .lineupListGroupItem.list-group-item {
+        padding: 1% 8px !important;
+    }
+}
+
+#keepStill {
+    position: absolute;
+    top: 65%;
+}
+
+/* 
+#addEnemyScore, #subEnemyScore {
+    display: inline;
+}
+
+#addEnemyScore {
+
+} */

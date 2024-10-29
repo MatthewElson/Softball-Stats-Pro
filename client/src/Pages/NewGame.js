@@ -8,24 +8,22 @@ import NavBar from '../Components/NavBar';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ListGroup from 'react-bootstrap/ListGroup';
-import EditPlayers from '../Modules/EditPlayersNewGame';
+import EditLineup from '../Modules/EditPlayersNewGame';
 import SubmitStats from '../Modules/SubmitStats';
 import Globals from '../Globals';
 
 const NewGame = () => {
-    const selectPlayerText = "Select a player";
     const { teamName } = useParams();
-    const [players, setPlayers] = useState([selectPlayerText, selectPlayerText, selectPlayerText, selectPlayerText, selectPlayerText, selectPlayerText, selectPlayerText, selectPlayerText, selectPlayerText, selectPlayerText])
+    const [players, setPlayers] = useState([])
     const [tempPlayers, setTempPlayers] = useState(players);
-    const [gameStats, setGameStats] = useState([[], [], [], [], [], [], [], [], [], []]);
-    const [rbis, setRbis] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-    const [average, setAverage] = useState([[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]);
-    const [selectedPlayerIdx, setSelectedPlayerIdx] = useState();
-    const [toggle, setToggle] = useState(false);
+    const [gameStats, setGameStats] = useState([]);
+    const [rbis, setRbis] = useState([]);
+    const [average, setAverage] = useState([]);
+    const [selectedPlayerIdx, setSelectedPlayerIdx] = useState(0);
     const [lineupToggle, setLineupToggle] = useState(true);
     const [popupToggle, setPopupToggle] = useState(false);
-    const [layout, setLayout] = useState(true)
     const [secret, setSecret] = useState("");
     const goodButtons = ["Single", "Double", "Triple", "Homerun"]
     const badButtons = ["Out", "Strikeout"];
@@ -33,26 +31,38 @@ const NewGame = () => {
     const [loading, setLoading] = useState(true);
     const [allPlayers, setAllPlayers] = useState();
     const [lineupCards, setLineupCards] = useState([]);
+    const [ourScore, setOurScore] = useState(0);
+    const [theirScore, setTheirScore] = useState(0);
+
 
     useEffect(() => {
         const func = async () => {
             const docRef = doc(db, "teams", teamName);
             const docSnap = await getDoc(docRef);
             setData(docSnap.data());
-            setAllPlayers(docSnap.data().players);//.players.sort((a, b) => a.name > b.name ? 1 : -1));
+            const playerData = docSnap.data().players;
+            setAllPlayers(playerData);//.players.sort((a, b) => a.name > b.name ? 1 : -1));
             setLoading(false);
+            const averagesNeeded = [];
+            const gameStatsNeeded = [];
+            const rbisNeeded = [];
+            for (let i = 0; i < playerData.length; i++) {
+                averagesNeeded.push([0, 0]);   
+                gameStatsNeeded.push([]);
+                rbisNeeded.push(0);
+            }
+            setAverage(averagesNeeded);
+            setGameStats(gameStatsNeeded);
+            setRbis(rbisNeeded);
         }
         func();
     }, [teamName]);
 
     const handleRadioChange = (e) => {
-        const idx = Number(e.target.value);
-        if (players[idx] !== selectPlayerText){
-            setSelectedPlayerIdx(Number(e.target.value));
-        }
+        setSelectedPlayerIdx(Number(e.target.value));
     }
 
-    const handleClick = (e) => {
+    const handleCompleteBatClick = (e, updatePoints = '') => {
 
         if (selectedPlayerIdx >= 0){
             const stat = e.target.value;
@@ -68,27 +78,23 @@ const NewGame = () => {
                 if (goodButtons.includes(stat)) {
                     copiedAverage[selectedPlayerIdx][0] += 1;
                 }
-    
                 setAverage(copiedAverage);
-
-                if (toggle) {
-                    if (selectedPlayerIdx !== players.length - 1){
-                        if (players[selectedPlayerIdx + 1] !== selectPlayerText)
-                            setSelectedPlayerIdx(prev => prev + 1);
-                        else 
-                            setSelectedPlayerIdx(0);
-                    } 
-                    else
-                        setSelectedPlayerIdx(0);
-                }
+                
+                // if(updatePoints)
+                //     setOurScore(prev => ++prev);
             }
-
             else if (stat === "RBI+" || (stat === "RBI-" && rbis[selectedPlayerIdx] > 0)){
                 const copiedRBIs = [...rbis];
-                if (stat === "RBI+")
+                if (stat === "RBI+"){
                     copiedRBIs[selectedPlayerIdx] += 1;
-                else
+                    if(updatePoints === 'add')
+                        setOurScore(prev => ++prev);
+                }
+                else{
                     copiedRBIs[selectedPlayerIdx] -= 1;
+                    if(updatePoints === 'subtract')
+                        setOurScore(prev => --prev);
+                }
 
                 setRbis(copiedRBIs);
             }
@@ -112,13 +118,13 @@ const NewGame = () => {
         }
     }
 
-    const handleSubmitForm = (e) => {
+    const handleLineupForm = (e) => {
         e.preventDefault();
         Globals.toggleCB(setLineupToggle);
         setPlayers(lineupCards);
     }
     
-    const handleSubmitStats = async (e) => {
+    const handleSubmitStatsForm = async (e) => {
         e.preventDefault();
         
         try {
@@ -128,8 +134,10 @@ const NewGame = () => {
                     const idx = players.indexOf(player);
                     
                     const docRef = doc(db, "teams", teamName);
+                    const docSnap = await getDoc(docRef);
+                    const teamPlayers = docSnap.data().players;
 
-                    const updatedPlayers = allPlayers.map((plyr) => {
+                    const updatedPlayers = teamPlayers.map((plyr) => {
                         const prevStats = {
                             singles: plyr.singles,
                             doubles: plyr.doubles,
@@ -140,7 +148,7 @@ const NewGame = () => {
                             rbis: plyr.rbis,
                             games: plyr.games,
                         };
-                        if (player === plyr.name) {
+                        if (player.name === plyr.name) {
                             gameStats[idx].forEach((type) => {
                                 if (type === "Single") {
                                     prevStats.singles += 1;
@@ -164,10 +172,10 @@ const NewGame = () => {
                         }
                         return plyr;
                     });
-                    
                     await updateDoc(docRef, { players: updatedPlayers });
                 }
-                alert("Stats have been successfully added")
+                alert("Stats have been successfully added");
+                Globals.toggleCB(setPopupToggle);
             } else {
                 alert("Wrong team password");
             }
@@ -177,41 +185,49 @@ const NewGame = () => {
         }
     };
 
-    const selectPlayerList = (i) => {
-        const dropdownObject = [];
-        dropdownObject.push(...data.players.filter((v,i) => 
-            {return  v !== selectPlayerText && !tempPlayers.includes(v)}
-        ).map(playerData => ({value: playerData.name, label: playerData.name, idx: i}) ));
-            return dropdownObject;
+    const goToPreviousBatter = () => {
+        selectedPlayerIdx - 1 > -1 ? setSelectedPlayerIdx(prev => prev - 1) : setSelectedPlayerIdx(players.length - 1);
     }
 
-    const handleSelectPlayer = (obj, itemAffected) => {
-        const copyTempPlayers = [...tempPlayers];
-        let changeValue = true;
-        if(itemAffected.action !== 'clear'){
-            for (let i = 0; i < copyTempPlayers.length; i++){
-                if (obj.value !== selectPlayerText && copyTempPlayers[i] === obj.value) {
-                    changeValue = false;
-                    return false;
+    const goToNextBatter = () => {
+        selectedPlayerIdx + 1 < players.length ? setSelectedPlayerIdx(prev => prev + 1) : setSelectedPlayerIdx(0);
+    }
+
+    const getNext3Batters = (players, idx) => {
+        const battersIndexes = [];
+        if(Boolean(players.length >= 3)){
+            if(players[idx]){
+                battersIndexes[0] = [players[idx]];
+                if(players[idx + 1]){
+                    battersIndexes[1] = [players[idx + 1]];
+                    if(players[idx + 2])
+                        battersIndexes[2] = [players[idx + 2]];
+                    else
+                        battersIndexes[2] = [players[0]];
+                }
+                else{
+                    battersIndexes[1] = [players[0]];
+                    battersIndexes[2] = [players[1]];
                 }
             }
+            else{
+                battersIndexes[0] = [players[0]];
+                battersIndexes[1] = [players[1]];
+                battersIndexes[2] = [players[2]];
+            }
         }
-        if (changeValue){
-            if(obj)
-                copyTempPlayers[obj.idx] = obj.value;
-            else
-                copyTempPlayers[itemAffected.removedValues[0].idx] = selectPlayerText;
-            setTempPlayers(copyTempPlayers);
-        }
+        else 
+            return [];
+        
+        return battersIndexes;
     }
-    
-    
+    try {
     return (
         <>
             {loading ? (<><h1 className="loading">Loading Stats...</h1><NavBar teamName={teamName}/></>) : (
             <>
-                {lineupToggle && <EditPlayers lineupToggle={lineupToggle} setLineupToggle={setLineupToggle} handleSubmitForm={handleSubmitForm} allPlayers={allPlayers} setAllPlayers={setAllPlayers} lineupCards={lineupCards} setLineupCards={setLineupCards}/>}
-                {popupToggle && <SubmitStats popupToggle setPopupToggle setSecret />}
+                {lineupToggle && <EditLineup lineupToggle={lineupToggle} setLineupToggle={setLineupToggle} handleLineupForm={handleLineupForm} allPlayers={allPlayers} setAllPlayers={setAllPlayers} lineupCards={lineupCards} setLineupCards={setLineupCards}/>}
+                {popupToggle && <SubmitStats popupToggle={popupToggle} setPopupToggle={setPopupToggle} setSecret={setSecret} handleSubmitStatsForm={handleSubmitStatsForm}/>}
                         
                 <Container className={`${lineupToggle ? "blurred" : ""}`}>
                     <Row><Col><NavBar teamName={teamName}/></Col></Row>
@@ -219,65 +235,114 @@ const NewGame = () => {
                         <Col className='mb-2 d-grid px-2'>
                             <Button onClick={() => Globals.toggleCB(setLineupToggle)}>Lineup</Button>
                         </Col>
-                        { !players.every((v) => v === selectPlayerText) && (
-                        <>
-                            <Col className='mb-2 d-grid px-2'>
-                                <Button className="layout" onClick={() => Globals.toggleCB(setLayout)}>{layout ? "2" : "1"}</Button>
-                            </Col>
-                            <Col className='mb-2 d-grid px-2'>
-                                <Button className="toggle" onClick={() => Globals.toggleCB(setToggle)}>{toggle ? "Auto" : "Manual"}</Button>
-                            </Col>
+                        { Boolean(players.length) && (
                             <Col className='mb-2 d-grid px-2'>
                                 <Button variant='success' onClick={()=> Globals.toggleCB(setPopupToggle)}>Submit Stats</Button>
-                            </Col>
-                        </>
+                            </Col>  
                         )}
                     </Row>
                     <Row>
-                        {players.map((player, idx) => (
-                            <Col xs={ layout ? "6" : "12"} className={`mb-2 px-2 ${(players[selectedPlayerIdx] !== selectPlayerText && player === players[selectedPlayerIdx]) ? "selected" : ""} ${player === selectPlayerText ? "hidden" : ""}`} key={'selected_' + idx}>
-                                <label className={`${(players[selectedPlayerIdx] !== selectPlayerText && player === players[selectedPlayerIdx]) ? "selectedPlayer" : "notSelectedPlayer"}`} htmlFor={player.name}>
+                        <Col xs={12}>
+                            <ListGroup horizontal className='mb-2'>
+                                <ListGroup.Item id='ourScore'>Us: {ourScore}</ListGroup.Item>
+                                <ListGroup.Item id='theirScore'>
+                                    <Row>
+                                        <Col>
+                                            <span className='me-2'>Them: {theirScore}</span>
+                                        </Col>
+                                        <Col className='p-0'>
+                                            <ButtonGroup size="sm">
+                                                <Button id='addEnemyScore' onClick={() => setTheirScore(prev => prev + 1)}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" variant="success" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                                                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                                                    </svg>
+                                                </Button>
+                                                <Button id='subEnemyScore' onClick={() => setTheirScore(prev => prev === 0 ? 0 : prev - 1)}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dash" viewBox="0 0 16 16">
+                                                        <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8"/>
+                                                    </svg>
+                                                </Button>
+                                            </ButtonGroup>
+                                        </Col>
+                                    </Row>
+                                </ListGroup.Item>
+                            </ListGroup>                            
+                        </Col>
+                    </Row>
+                    <Row id="currentBatterRow">
+                        <Col className="currentBatterNav">
+                            <svg xmlns="http://www.w3.org/2000/svg" onClick={goToPreviousBatter} fill={'currentColor'} class="bi bi-chevron-compact-left goToPreviousBatter" viewBox="5 0 5 16" preserveAspectRatio="none">
+                               <path fill-rule="evenodd" d="M9.224 1.553a.5.5 0 0 1 .223.67L6.56 8l2.888 5.776a.5.5 0 1 1-.894.448l-3-6a.5.5 0 0 1 0-.448l3-6a.5.5 0 0 1 .67-.223"/>
+                            </svg>
+                        </Col>
+                        {getNext3Batters(players, selectedPlayerIdx)[0]?.map((player) => (
+                            <Col xs="10" className={`mb-2 px-2 ${player === players[selectedPlayerIdx] ? "selected" : ""}`} key={'selected_' + selectedPlayerIdx}>
+                                <label className={`${player === players[selectedPlayerIdx] ? "selectedPlayer" : "notSelectedPlayer"}`} htmlFor={player.name}>
+                                    <ListGroup>
+                                        <ListGroup.Item className='lineupListGroupItemTop'>Batter # {(selectedPlayerIdx + 1)}</ListGroup.Item>
+                                    </ListGroup>
                                     <ListGroup horizontal>
-                                        <ListGroup.Item className={`lineupListGroupItem ${(layout ? 'px-2' : '')}`}>{layout ? player.name?.substring(0,4) : player.name}</ListGroup.Item>
-                                        <ListGroup.Item className={`lineupListGroupItem ${(layout ? 'px-2' : '')}`}>{average[idx][0]}/{average[idx][1]}</ListGroup.Item>
-                                        <ListGroup.Item className={`lineupListGroupItem ${(layout ? 'px-2' : '')}`}>{rbis[idx]} {layout ? "" : "RBI's"}</ListGroup.Item>
+                                        <ListGroup.Item className='lineupListGroupItem' id="battingPlayersName">{player.name?.substring(0,10)}</ListGroup.Item>
+                                        <ListGroup.Item className='lineupListGroupItem' id="battingPlayersAverage">{average[selectedPlayerIdx][0]}/{average[selectedPlayerIdx][1]}</ListGroup.Item>
+                                        <ListGroup.Item className='lineupListGroupItem' id="battingPlayersRBIs">{rbis[selectedPlayerIdx]} RBI's</ListGroup.Item>
                                     </ListGroup>
                                     <ListGroup> 
-                                        <ListGroup.Item className='lineupListGroupItemBottom'>{gameStats[idx].length ? gameStats[idx].join(", ") : 'No Bats Yet'}</ListGroup.Item>
+                                        <ListGroup.Item className='lineupListGroupItemBottom'>{gameStats[selectedPlayerIdx].length ? gameStats[selectedPlayerIdx].join(", ") : 'No Bats Yet'}</ListGroup.Item>
                                     </ListGroup>
                                 </label>
                             </Col>
                         ))}
+                        <Col className="currentBatterNav">
+                            <svg xmlns="http://www.w3.org/2000/svg" onClick={goToNextBatter} fill={'currentColor'} class="bi bi-chevron-compact-right goToNextBatter" viewBox="6 0 5 16" preserveAspectRatio="none">
+                                <path fill-rule="evenodd" d="M6.776 1.553a.5.5 0 0 1 .671.223l3 6a.5.5 0 0 1 0 .448l-3 6a.5.5 0 1 1-.894-.448L9.44 8 6.553 2.224a.5.5 0 0 1 .223-.671"/>
+                            </svg>
+                        </Col>
                     </Row>
-                    { !players.every((v) => v === selectPlayerText) && (
-                    <>
-                        <Row className='justify-content-center' xs={2} md={4}>
-                            {goodButtons.map((btn, idx) => (
-                                <Col className='d-grid px-2' key={`button_${idx}`}>
-                                    <Button className="mb-2" value={btn} onClick={handleClick}>{btn}</Button>
-                                </Col>
-                            ))}
-                        </Row>
-                        <Row className='justify-content-center' xs={2} md={4}>
-                            <Col className='d-grid px-2'>
-                                <Button className="mb-2" value="RBI+" onClick={handleClick}>RBI+</Button>
-                            </Col>
-                            <Col className='d-grid px-2'>
-                                <Button className="mb-2" variant="warning" value="RBI-" onClick={handleClick}>RBI-</Button>
-                            </Col>
-                            {badButtons.map((btn, idx) => (
-                                <Col className='d-grid px-2' key={`button_${idx}`}>
-                                    <Button className="mb-2" variant="danger" value={btn} onClick={handleClick}>{btn}</Button>
-                                </Col>
-                            ))}
-                        </Row>
-                        <Row className='justify-content-center' xs={2} md={4}>
-                            <Col className='d-grid px-2'>
-                                <Button className="mb-2 delete-Button" variant='warning' onClick={handleDelete}>Delete Stat</Button>
-                            </Col>
-                        </Row>
-                    </>
-                    )}
+                    <Row>
+                        <Col xs={{ span: 10, offset: 1 }}>
+                            <ListGroup>
+                                    {getNext3Batters(players, selectedPlayerIdx)[1]?.map((player) => (
+                                        <ListGroup.Item><b>On Deck: </b>{player.name}</ListGroup.Item>
+                                    ))}
+                                    {getNext3Batters(players, selectedPlayerIdx)[2]?.map((player) => (
+                                        <ListGroup.Item><b>In The Hole: </b>{player.name}</ListGroup.Item>
+                                    ))}
+                            </ListGroup>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col id="keepStill">
+                            { Boolean(players.length) && (
+                            <>
+                                <Row className='justify-content-center' xs={2} md={4}>
+                                    {goodButtons.map((btn, idx) =>
+                                        <Col className='d-grid px-2 ' key={`button_${idx}`}>
+                                            <Button className="mb-2" value={btn} onClick={handleCompleteBatClick}>{btn}</Button>
+                                        </Col>
+                                    )}
+                                </Row>
+                                <Row className='justify-content-center' xs={2} md={4}>
+                                    <Col className='d-grid px-2'>
+                                        <Button className="mb-2" value="RBI+" onClick={(e) => handleCompleteBatClick(e, 'add')}>RBI+</Button>
+                                    </Col>
+                                    <Col className='d-grid px-2'>
+                                        <Button className="mb-2" variant="warning" value="RBI-" onClick={(e) => handleCompleteBatClick(e, 'subtract')}>RBI-</Button>
+                                    </Col>
+                                    {badButtons.map((btn, idx) => (
+                                        <Col className='d-grid px-2' key={`button_${idx}`}>
+                                            <Button className="mb-2" variant="danger" value={btn} onClick={handleCompleteBatClick}>{btn}</Button>
+                                        </Col>
+                                    ))}
+                                </Row>
+                                <Row className='justify-content-center' xs={2} md={4}>
+                                    <Col className='d-grid px-2'>
+                                        <Button className="mb-2 delete-Button" variant='warning' onClick={handleDelete}>Delete Stat</Button>
+                                    </Col>
+                                </Row>
+                            </>
+                            )}
+                        </Col>
+                    </Row>
                     {lineupCards.map((player, idx) => (
                         <input key={'radio_' + idx} id={player.name} type="radio" name="selector" className='hidden' value={idx} checked={player?.name === players[selectedPlayerIdx]?.name} onChange={handleRadioChange} />
                     ))}
@@ -285,6 +350,10 @@ const NewGame = () => {
             </>)}
         </>
     )
+    }
+    catch(e){
+       console.error(e);
+    }
 };
 
 export default NewGame;
