@@ -17,7 +17,7 @@ import Globals from '../Globals';
 const NewGame = () => {
     const { teamName } = useParams();
     const [players, setPlayers] = useState([])
-    const [tempPlayers, setTempPlayers] = useState(players);
+    //const [tempPlayers, setTempPlayers] = useState(players);
     const [gameStats, setGameStats] = useState([]);
     const [rbis, setRbis] = useState([]);
     const [average, setAverage] = useState([]);

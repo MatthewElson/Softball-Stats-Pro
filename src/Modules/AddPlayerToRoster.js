@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Globals from '../Globals';
 import { db } from "../firebase";
-import { doc, updateDoc, getDoc, arrayUnion} from "firebase/firestore";
+import { doc, updateDoc, arrayUnion} from "firebase/firestore";
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
