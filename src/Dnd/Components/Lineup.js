@@ -1,4 +1,4 @@
-import React, { useCallback, memo } from 'react';
+import React, { useCallback } from 'react';
 import { useDrop, useDrag } from 'react-dnd';
 import ItemTypes from '../Types/NewGameTypes';
 import update from 'immutability-helper';

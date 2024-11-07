@@ -1,4 +1,4 @@
-import React, { useState }  from 'react';
+import React  from 'react';
 // import CloseButton from 'react-bootstrap/CloseButton';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
@@ -11,6 +11,7 @@ import { TouchBackend } from 'react-dnd-touch-backend'
 
 
 const EditPlayers = ({ lineupToggle, setLineupToggle, handleLineupForm, allPlayers, setAllPlayers, lineupCards, setLineupCards}) => {
+    
     return (
         <div className='modal show' style={{ display: 'block', position: 'initial' }}>
             <Modal id="selectPlayersModal" show={lineupToggle} onHide={() => Globals.toggleCB(setLineupToggle)}>
@@ -19,7 +20,7 @@ const EditPlayers = ({ lineupToggle, setLineupToggle, handleLineupForm, allPlaye
                         <Modal.Title>Edit Players</Modal.Title>
                     </Modal.Header>
                     <Modal.Body id="selectPlayersModelBody">
-                        <DndProvider backend={TouchBackend} options={{enableMouseEvents: true}}>
+                        <DndProvider backend={window.innerWidth < 500 ? TouchBackend : HTML5Backend} options={{enableMouseEvents: true}}>
                             <DndRosterContainer lineupCards={lineupCards} setLineupCards={setLineupCards} allPlayers={allPlayers} setAllPlayers={setAllPlayers}/>
                         </DndProvider>
                     </Modal.Body>

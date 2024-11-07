@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from "../firebase.js";
-import { doc, getDoc, deleteField, updateDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { useParams } from 'react-router-dom';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Container from 'react-bootstrap/Container';
