@@ -54,13 +54,11 @@ function useDndDrag(type, item, setFunction, removeFunction, idx, from){
         console.log('item :', item);
         // setLineupCards([...lineupCards, item]);
         setFunction((prev) => update(prev, {$push:[{...item, from: from}]}));
-        // setFunction((prev) => prev.push(item));
-        //removeFunction((prev) => update(prev, {[idx]:{$set: {}}}));
-        removeFunction((prev) => update(prev, {$unset: [idx]}));
-        // removeFunction((prev) => {
-        //   console.log('prev :', prev);
-        //   return prev.splice(idx, 1);
-        // });
+
+        removeFunction((prev) => { 
+          return update(prev, { 
+            $splice: [[idx, 1]]
+        })});
       }
     },
     collect: (monitor) => ({

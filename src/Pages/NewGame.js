@@ -17,7 +17,7 @@ import Globals from '../Globals';
 const NewGame = () => {
     const { teamName } = useParams();
     const [players, setPlayers] = useState([])
-    //const [tempPlayers, setTempPlayers] = useState(players);
+    const [tempPlayers, setTempPlayers] = useState(players);
     const [gameStats, setGameStats] = useState([]);
     const [rbis, setRbis] = useState([]);
     const [average, setAverage] = useState([]);
@@ -76,7 +76,7 @@ const NewGame = () => {
                 const copiedAverage = [...average];
                 copiedAverage[selectedPlayerIdx][1] += 1;
     
-                if (goodButtons.some((elem) => elem.buttonText === stat)) {
+                if (goodButtons.some((elem) => elem.playerOutcomes === stat)) {
                     copiedAverage[selectedPlayerIdx][0] += 1;
                 }
                 setAverage(copiedAverage);

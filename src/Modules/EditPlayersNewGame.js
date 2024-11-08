@@ -10,32 +10,29 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend'
 
 
-const EditPlayers = ({ lineupToggle, setLineupToggle, handleLineupForm, allPlayers, setAllPlayers, lineupCards, setLineupCards}) => {
-    
-    return (
-        <div className='modal show' style={{ display: 'block', position: 'initial' }}>
-            <Modal id="selectPlayersModal" show={lineupToggle} onHide={() => Globals.toggleCB(setLineupToggle)}>
-                <Form onSubmit={handleLineupForm}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Edit Players</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body id="selectPlayersModelBody">
-                        <DndProvider backend={window.innerWidth < 500 ? TouchBackend : HTML5Backend} options={{enableMouseEvents: true}}>
-                            <DndRosterContainer lineupCards={lineupCards} setLineupCards={setLineupCards} allPlayers={allPlayers} setAllPlayers={setAllPlayers}/>
-                        </DndProvider>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="success" type='submit'>
-                            Save
-                        </Button>
-                        <Button variant="secondary" onClick={() => Globals.toggleCB(setLineupToggle)}>
-                            Cancel
-                        </Button>
-                    </Modal.Footer>
-                </Form>
-            </Modal>
-        </div>
-    )
-}
+const EditPlayers = ({ lineupToggle, setLineupToggle, handleLineupForm, allPlayers, setAllPlayers, lineupCards, setLineupCards}) => (
+    <div className='modal show' style={{ display: 'block', position: 'initial' }}>
+        <Modal id="selectPlayersModal" show={lineupToggle} onHide={() => Globals.toggleCB(setLineupToggle)}>
+            <Form onSubmit={handleLineupForm}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Edit Players</Modal.Title>
+                </Modal.Header>
+                <Modal.Body id="selectPlayersModelBody">
+                    <DndProvider backend={window.innerWidth < 500 ? TouchBackend : HTML5Backend} options={{enableMouseEvents: true}}>
+                        <DndRosterContainer lineupCards={lineupCards} setLineupCards={setLineupCards} allPlayers={allPlayers} setAllPlayers={setAllPlayers}/>
+                    </DndProvider>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="success" type='submit'>
+                        Save
+                    </Button>
+                    <Button variant="secondary" onClick={() => Globals.toggleCB(setLineupToggle)}>
+                        Cancel
+                    </Button>
+                </Modal.Footer>
+            </Form>
+        </Modal>
+    </div>
+)
 
 export default EditPlayers;
