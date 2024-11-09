@@ -211,7 +211,29 @@ body {
 
 #keepStill {
     position: absolute;
-    top: 65%;
+    top: 70%;
+    display: inline-grid;
+}
+
+.whiteBorder {
+    border: 1px solid #FFF;
+}
+
+.buttonGroupLabel {
+    max-width: 27%;
+    min-width: 27%;
+}
+
+/*based on 
+    + 2 px for the extra borders    
+    .buttonGroupLabel {
+        max-width: 27%;
+        min-width: 27%;
+    }
+*/
+.btnGroup2Items {
+    max-width: calc(36.5% + 1px);
+    min-width: calc(36.5% + 1px);
 }
 
 /* 

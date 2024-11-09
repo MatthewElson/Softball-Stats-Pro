@@ -18,7 +18,7 @@ const EditPlayers = ({ lineupToggle, setLineupToggle, handleLineupForm, allPlaye
                     <Modal.Title>Edit Players</Modal.Title>
                 </Modal.Header>
                 <Modal.Body id="selectPlayersModelBody">
-                    <DndProvider backend={window.innerWidth < 500 ? TouchBackend : HTML5Backend} options={{enableMouseEvents: true}}>
+                    <DndProvider backend={window.innerWidth < 800 ? TouchBackend : HTML5Backend} options={{enableMouseEvents: true}}>
                         <DndRosterContainer lineupCards={lineupCards} setLineupCards={setLineupCards} allPlayers={allPlayers} setAllPlayers={setAllPlayers}/>
                     </DndProvider>
                 </Modal.Body>

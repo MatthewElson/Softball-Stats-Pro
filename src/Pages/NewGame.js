@@ -25,7 +25,7 @@ const NewGame = () => {
     const [lineupToggle, setLineupToggle] = useState(true);
     const [popupToggle, setPopupToggle] = useState(false);
     const [secret, setSecret] = useState("");
-    const goodButtons = [{ buttonText:"1", playerOutcomes: "Single"}, { buttonText:"2", playerOutcomes: "Double"}, { buttonText:"3", playerOutcomes: "Triple"}, { buttonText:"Homerun", playerOutcomes: "Homerun"}]
+    const goodButtons = [{ buttonText:"1st", playerOutcomes: "Single"}, { buttonText:"2nd", playerOutcomes: "Double"}, { buttonText:"3rd", playerOutcomes: "Triple"}, { buttonText:"Homerun", playerOutcomes: "Homerun"}]
     const badButtons = ["Out", "Strikeout"];
     const [data, setData] = useState({});
     const [loading, setLoading] = useState(true);
@@ -319,35 +319,29 @@ const NewGame = () => {
                         </Col>
                     </Row>
                     <Row>
-                        <Col id="keepStill">
+                        <Col id="keepStill" className='px-2' xs={12} md={11}>
                             { players.length >= 3 && (
                             <>
-                                <Row className='justify-content-center' xs={12}>
-                                    <ButtonGroup>
-                                        <Button className="mb-2" disabled>On Base</Button>
-                                        {goodButtons.map((btn, idx) =>
-                                            <Button className="mb-2" value={btn.playerOutcomes} style={{border: '1px solid #FFF'}} key={`goodButton_${idx}`} onClick={handleCompleteBatClick}>{btn.buttonText}</Button>
-                                        )}
-                                    </ButtonGroup>
-                                </Row>
-                                <Row className='justify-content-center' xs={2} md={4}>
-                                    <Col className='d-grid px-2'>
-                                        <Button className="mb-2" value="RBI+" onClick={(e) => handleCompleteBatClick(e, 'add')}>RBI+</Button>
-                                    </Col>
-                                    <Col className='d-grid px-2'>
-                                        <Button className="mb-2" variant="warning" value="RBI-" onClick={(e) => handleCompleteBatClick(e, 'subtract')}>RBI-</Button>
-                                    </Col>
+                                <ButtonGroup className='mb-1'>
+                                    <Button className="px-2 buttonGroupLabel" disabled>On Base</Button>
+                                    {goodButtons.map((btn, idx) =>
+                                        <Button className="px-2 whiteBorder" value={btn.playerOutcomes} key={`goodButton_${idx}`} onClick={handleCompleteBatClick}>{btn.buttonText}</Button>
+                                    )}
+                                </ButtonGroup>
+                                <ButtonGroup className='mb-1'>
+                                    <Button className="px-2 buttonGroupLabel" disabled>Points</Button>
+                                    <Button className="px-2 whiteBorder btnGroup2Items" value="RBI+" onClick={(e) => handleCompleteBatClick(e, 'add')}>RBI+</Button>
+                                    <Button className="px-2 whiteBorder btnGroup2Items" variant="warning" value="RBI-" onClick={(e) => handleCompleteBatClick(e, 'subtract')}>RBI-</Button>
+                                </ButtonGroup>
+                                <ButtonGroup className='mb-1'>
+                                    <Button className="px-2 buttonGroupLabel" disabled>Other</Button>
                                     {badButtons.map((btn, idx) => (
-                                        <Col className='d-grid px-2' key={`badButton_${idx}`}>
-                                            <Button className="mb-2" variant="danger" value={btn} onClick={handleCompleteBatClick}>{btn}</Button>
-                                        </Col>
+                                        <Button className="px-2 whiteBorder btnGroup2Items" key={`badButton_${idx}`} variant="danger" value={btn} onClick={handleCompleteBatClick}>{btn}</Button>
                                     ))}
-                                </Row>
-                                <Row className='justify-content-center' xs={2} md={4}>
-                                    <Col className='d-grid px-2'>
-                                        <Button className="mb-2 delete-Button" variant='warning' onClick={handleDelete}>Delete Stat</Button>
-                                    </Col>
-                                </Row>
+                                </ButtonGroup>
+                                <ButtonGroup className='mb-1'>
+                                    <Button className="delete-Button" variant='warning' onClick={handleDelete}>Delete Stat</Button>
+                                </ButtonGroup>
                             </>
                             )}
                         </Col>
