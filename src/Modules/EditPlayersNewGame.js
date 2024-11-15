@@ -10,7 +10,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend'
 
 
-const EditPlayers = ({ lineupToggle, setLineupToggle, handleLineupForm, allPlayers, setAllPlayers, lineupCards, setLineupCards}) => (
+const EditPlayers = ({ lineupToggle, setLineupToggle, handleLineupForm, allPlayers, lineupCards, setLineupCards, removePlayerFromFunctions}) => (
     <div className='modal show' style={{ display: 'block', position: 'initial' }}>
         <Modal id="selectPlayersModal" show={lineupToggle} onHide={() => Globals.toggleCB(setLineupToggle)}>
             <Form onSubmit={handleLineupForm}>
@@ -19,7 +19,7 @@ const EditPlayers = ({ lineupToggle, setLineupToggle, handleLineupForm, allPlaye
                 </Modal.Header>
                 <Modal.Body id="selectPlayersModelBody">
                     <DndProvider backend={window.innerWidth < 800 ? TouchBackend : HTML5Backend} options={{enableMouseEvents: true}}>
-                        <DndRosterContainer lineupCards={lineupCards} setLineupCards={setLineupCards} allPlayers={allPlayers} setAllPlayers={setAllPlayers}/>
+                        <DndRosterContainer lineupCards={lineupCards} setLineupCards={setLineupCards} allPlayers={allPlayers} removePlayerFromFunctions={removePlayerFromFunctions}/>
                     </DndProvider>
                 </Modal.Body>
                 <Modal.Footer>

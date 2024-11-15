@@ -6,15 +6,14 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Badge from 'react-bootstrap/Badge';
 import Card from 'react-bootstrap/Card';
 
-function Lineup ({ lineupCards, setFunction, removeFunction }) {
+function Lineup ({ lineupCards, setFunction, removePlayerFromFunctions }) {
   const { drop, backgroundColor, isActive } = useDndDrop([ItemTypes.ROSTER, ItemTypes.SUB], 'lineup','white')
-  // player, setFunction, removeFunction, idx
   return (
     <Card id="lineup" className='minHeight100 fillAvailable' ref={drop} variant="success" data-testid="lineup">
       <Badge className='minHeight100 fillAvailable' bg={backgroundColor}>
           <p>{isActive ? 'Release to add player' : 'Drag a player here'}</p>
           <ListGroup variant="flush">
-            {lineupCards.map( (player, idx) => <PlayerPlaying key={"playerInLineup" + idx} player={player} setFunction={player.isSub ? setFunction[1] : setFunction[0]} removeFunction={removeFunction} idx={idx} type={ItemTypes.LINEUP} name='lineup' bg='white'/>)}
+            {lineupCards.map( (player, idx) => <PlayerPlaying key={"playerInLineup" + idx} player={player} setFunction={player.isSub ? setFunction[1] : setFunction[0]} idx={idx} type={ItemTypes.LINEUP} name='lineup' bg='white' removePlayerFromFunctions={removePlayerFromFunctions}/>)}
           </ListGroup>
       </Badge>
     </Card>
@@ -42,8 +41,7 @@ function useDndDrop(accepts, name, ...backgroundColors) {
   return {drop, backgroundColor, isActive}
 }
 
-
-function useDndDrag(type, item, setFunction, removeFunction, idx, from){
+function useDndDrag(type, item, setFunction, idx, from, removePlayerFromFunctions = null){
   const [{ isDragging }, drag] = useDrag(() => ({
     type: type,
     item: item,
@@ -55,10 +53,14 @@ function useDndDrag(type, item, setFunction, removeFunction, idx, from){
         // setLineupCards([...lineupCards, item]);
         setFunction((prev) => update(prev, {$push:[{...item, from: from}]}));
 
-        removeFunction((prev) => { 
-          return update(prev, { 
-            $splice: [[idx, 1]]
-        })});
+        if(removePlayerFromFunctions){
+          removePlayerFromFunctions.forEach(func => {
+            func((prev) => { 
+              return update(prev, { 
+                $splice: [[idx, 1]]
+            })});
+          });
+        }
       }
     },
     collect: (monitor) => ({
@@ -70,8 +72,8 @@ function useDndDrag(type, item, setFunction, removeFunction, idx, from){
   return { drag, opacity };
 }
 
-function PlayerPlaying({player, setFunction, removeFunction, idx, type, name, bg='transparent'}) {
-  const {drag, opacity} = useDndDrag(type, player, setFunction, removeFunction, idx, name);
+function PlayerPlaying({player, setFunction, idx, type, name, bg='transparent', removePlayerFromFunctions}) {
+  const {drag, opacity} = useDndDrag(type, player, setFunction, idx, name, removePlayerFromFunctions);
   const { drop } = useDndDrop([ItemTypes.LINEUP], 'lineup');
   let callbackRef = useCallback(
     element => {

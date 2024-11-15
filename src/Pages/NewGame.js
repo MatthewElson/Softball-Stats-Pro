@@ -18,7 +18,7 @@ const NewGame = () => {
     const { teamName } = useParams();
     const [players, setPlayers] = useState([])
     // const [tempPlayers, setTempPlayers] = useState(players);
-    const [gameStats, setGameStats] = useState([]);
+    const [gameStats, setGameStats] = useState([]); 
     const [rbis, setRbis] = useState([]);
     const [average, setAverage] = useState([]);
     const [selectedPlayerIdx, setSelectedPlayerIdx] = useState(0);
@@ -108,7 +108,7 @@ const NewGame = () => {
             const currAvgStats = [...average];
             const deletedStat = currGameStats[selectedPlayerIdx].pop();
             if (deletedStat){
-                if (goodButtons.includes(deletedStat)){
+                if (goodButtons.some((elem) => elem.playerOutcomes === deletedStat)){
                     currAvgStats[selectedPlayerIdx][0] -= 1;
                 }
                 currAvgStats[selectedPlayerIdx][1] -= 1;
@@ -228,7 +228,7 @@ const NewGame = () => {
         <>
             {loading ? (<><h1 className="loading">Loading Stats...</h1><NavBar teamName={teamName}/></>) : (
             <>
-                {lineupToggle && <EditLineup lineupToggle={lineupToggle} setLineupToggle={setLineupToggle} handleLineupForm={handleLineupForm} allPlayers={allPlayers} setAllPlayers={setAllPlayers} lineupCards={lineupCards} setLineupCards={setLineupCards}/>}
+                {lineupToggle && <EditLineup lineupToggle={lineupToggle} setLineupToggle={setLineupToggle} handleLineupForm={handleLineupForm} allPlayers={allPlayers} lineupCards={lineupCards} setLineupCards={setLineupCards} removePlayerFromFunctions={[setRbis, setGameStats, setAverage]} />}
                 {popupToggle && <SubmitStats popupToggle={popupToggle} setPopupToggle={setPopupToggle} setSecret={setSecret} handleSubmitStatsForm={handleSubmitStatsForm}/>}
                         
                 <Container className={`${lineupToggle ? "blurred" : ""}`}>
