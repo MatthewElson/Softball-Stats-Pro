@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PlayerPlaying, Lineup, useDndDrop } from '../Components/Lineup';
 import ItemTypes from '../Types/NewGameTypes';
 import Container from 'react-bootstrap/Container';
@@ -10,21 +10,25 @@ import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 
 const DndRosterContainer = ({lineupCards, setLineupCards, allPlayers, removePlayerFromFunctions }) => {
+    const [rosterCards, setRosterCards] = useState([]);
+    const [subsCards, setSubsCards] = useState([]);
 
-  const roster = allPlayers.filter(player => {
-      const lineupCardHasPlayerName = lineupCards.some(lineupCard => lineupCard.name === player.name);
-      if(!lineupCardHasPlayerName)
-        return Object.keys(player).length && !player.isSub;
-      return null;
-    });
-    const subs = allPlayers.filter(player => {
-      const lineupCardHasPlayerName = lineupCards.some(lineupCard => lineupCard.name === player.name);
-      if(!lineupCardHasPlayerName)
-        return player.isSub;
-      return null;
-    });
-    const [rosterCards, setRosterCards] = useState(roster);
-    const [subsCards, setSubsCards] = useState(subs);
+    useEffect(() => {
+      const roster = allPlayers.filter(player => {
+        const lineupCardHasPlayerName = lineupCards.some(lineupCard => lineupCard.name === player.name);
+        if(!lineupCardHasPlayerName)
+          return Object.keys(player).length && !player.isSub;
+        return null;
+      });
+      const subs = allPlayers.filter(player => {
+        const lineupCardHasPlayerName = lineupCards.some(lineupCard => lineupCard.name === player.name);
+        if(!lineupCardHasPlayerName)
+          return player.isSub;
+        return null;
+      });
+      setRosterCards(roster);
+      setSubsCards(subs);
+    }, [allPlayers, lineupCards]);
     // const { drop, backgroundColor, isActive } = useDndDrop(ItemTypes.LINEUP, 'Sub');
     
     const PlayersInTabs = ({cards, setFunction, type, name, removePlayerFromFunctions}) => {

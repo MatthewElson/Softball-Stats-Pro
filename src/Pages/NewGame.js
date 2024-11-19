@@ -226,34 +226,34 @@ const NewGame = () => {
     try {
     return (
         <>
-            {loading ? (<><h1 className="loading">Loading Stats...</h1><NavBar teamName={teamName}/></>) : (
+            {loading ? (<><h1 className="loading">Loading Game...</h1><NavBar teamName={teamName}/></>) : (
             <>
                 {lineupToggle && <EditLineup lineupToggle={lineupToggle} setLineupToggle={setLineupToggle} handleLineupForm={handleLineupForm} allPlayers={allPlayers} lineupCards={lineupCards} setLineupCards={setLineupCards} removePlayerFromFunctions={[setRbis, setGameStats, setAverage]} />}
                 {popupToggle && <SubmitStats popupToggle={popupToggle} setPopupToggle={setPopupToggle} setSecret={setSecret} handleSubmitStatsForm={handleSubmitStatsForm}/>}
                         
                 <Container className={`${lineupToggle ? "blurred" : ""}`}>
-                    <Row><Col><NavBar teamName={teamName}/></Col></Row>
-                    <Row className='justify-content-center' xs={2} md={4}>
-                        <Col className='mb-2 d-grid px-2'>
-                            <Button onClick={() => Globals.toggleCB(setLineupToggle)}>Lineup</Button>
+                    <Row xs={12}><Col><NavBar teamName={teamName}/></Col></Row>
+                    <Row xs={12} className='mb-2'>
+                        <Col className='isInlineGrid'>
+                            <ButtonGroup className='my-1'>
+                                <Button onClick={() => Globals.toggleCB(setLineupToggle)}>Lineup</Button>
+                                { players.length >= 3 &&
+                                    <Button variant='success' onClick={()=> Globals.toggleCB(setPopupToggle)}>Submit Stats</Button>
+                                }
+                            </ButtonGroup>
                         </Col>
-                        { players.length >= 3 && 
-                            <Col className='mb-2 d-grid px-2'>
-                                <Button variant='success' onClick={()=> Globals.toggleCB(setPopupToggle)}>Submit Stats</Button>
-                            </Col>  
-                        }
                     </Row>
-                    <Row>
+                    <Row className='mb-2'>
                         { players.length >= 3 &&
                             <Col xs={12}>
-                                <ListGroup horizontal className='mb-2'>
-                                    <ListGroup.Item id='ourScore'>Us: {ourScore}</ListGroup.Item>
+                                <ListGroup horizontal className='my-1'>
+                                    <ListGroup.Item id='ourScore' className='vertical-align:middle'>Us: {ourScore}</ListGroup.Item>
                                     <ListGroup.Item id='theirScore'>
                                         <Row>
                                             <Col>
-                                                <span className='me-2'>Them: {theirScore}</span>
+                                                <span className='me-1 vertical-align:middle'>Them: {theirScore}</span>
                                             </Col>
-                                            <Col className='p-0'>
+                                            <Col className='px-0'>
                                                 <ButtonGroup size="sm">
                                                     <Button id='addEnemyScore' onClick={() => setTheirScore(prev => prev + 1)}>
                                                         <svg xmlns="http://www.w3.org/2000/svg" variant="success" width="16" height="16" fill="currentColor" className="bi bi-plus" viewBox="0 0 16 16">
@@ -273,7 +273,7 @@ const NewGame = () => {
                             </Col>
                         }
                     </Row>
-                    <Row id="currentBatterRow">
+                    <Row id="currentBatterRow" className='mb-2'>
                         { players.length >= 3  && 
                             <Col className="currentBatterNav">
                                 <svg xmlns="http://www.w3.org/2000/svg" onClick={goToPreviousBatter} fill={'currentColor'} className="bi bi-chevron-compact-left goToPreviousBatter" viewBox="5 0 5 16" preserveAspectRatio="none">
@@ -282,18 +282,18 @@ const NewGame = () => {
                             </Col>
                         }
                         { getNext3Batters(players, selectedPlayerIdx)[0]?.map((player) => (
-                            <Col xs="10" className={`mb-2 px-2 ${player === players[selectedPlayerIdx] ? "selected" : ""}`} key={'selected_' + selectedPlayerIdx}>
+                            <Col xs="10" className={`mb-1 px-2 ${player === players[selectedPlayerIdx] ? "selected" : ""}`} key={'selected_' + selectedPlayerIdx}>
                                 <label className={`${player === players[selectedPlayerIdx] ? "selectedPlayer" : "notSelectedPlayer"}`} htmlFor={player.name}>
                                     <ListGroup>
-                                        <ListGroup.Item className='lineupListGroupItemTop'>Batter # {(selectedPlayerIdx + 1)}</ListGroup.Item>
+                                        <ListGroup.Item className='lineupListGroupItemTop yPadding'>Batter # {(selectedPlayerIdx + 1)}</ListGroup.Item>
                                     </ListGroup>
                                     <ListGroup horizontal>
-                                        <ListGroup.Item className='lineupListGroupItem' id="battingPlayersName">{player.name?.substring(0,10)}</ListGroup.Item>
-                                        <ListGroup.Item className='lineupListGroupItem' id="battingPlayersAverage">{average[selectedPlayerIdx][0]}/{average[selectedPlayerIdx][1]}</ListGroup.Item>
-                                        <ListGroup.Item className='lineupListGroupItem' id="battingPlayersRBIs">{rbis[selectedPlayerIdx]} RBI's</ListGroup.Item>
+                                        <ListGroup.Item className='lineupListGroupItem yPadding' id="battingPlayersName">{player.name?.substring(0,10)}</ListGroup.Item>
+                                        <ListGroup.Item className='lineupListGroupItem yPadding' id="battingPlayersAverage">{average[selectedPlayerIdx][0]}/{average[selectedPlayerIdx][1]}</ListGroup.Item>
+                                        <ListGroup.Item className='lineupListGroupItem yPadding' id="battingPlayersRBIs">{rbis[selectedPlayerIdx]} RBI's</ListGroup.Item>
                                     </ListGroup>
                                     <ListGroup> 
-                                        <ListGroup.Item className='lineupListGroupItemBottom'>{gameStats[selectedPlayerIdx].length ? gameStats[selectedPlayerIdx].join(", ") : 'No Bats Yet'}</ListGroup.Item>
+                                        <ListGroup.Item className='lineupListGroupItemBottom yPadding'>{gameStats[selectedPlayerIdx].length ? gameStats[selectedPlayerIdx].join(", ") : 'No Bats Yet'}</ListGroup.Item>
                                     </ListGroup>
                                 </label>
                             </Col>
@@ -306,20 +306,20 @@ const NewGame = () => {
                             </Col>
                         }
                     </Row>
-                    <Row>
+                    <Row className='mb-2'>
                         <Col xs={{ span: 10, offset: 1 }}>
                             <ListGroup>
                                 {getNext3Batters(players, selectedPlayerIdx)[1]?.map((player) => (
-                                    <ListGroup.Item key={`OnDeck${player.name}`}><b>On Deck: </b>{player.name}</ListGroup.Item>
+                                    <ListGroup.Item key={`OnDeck${player.name}`} className='yPadding'><b>Deck: </b>{player.name}</ListGroup.Item>
                                 ))}
                                 {getNext3Batters(players, selectedPlayerIdx)[2]?.map((player) => (
-                                    <ListGroup.Item key={`OnDeck${player.name}`}><b>In The Hole: </b>{player.name}</ListGroup.Item>
+                                    <ListGroup.Item key={`OnDeck${player.name}`} className='yPadding'><b>Hole: </b>{player.name}</ListGroup.Item>
                                 ))}
                             </ListGroup>
                         </Col>
                     </Row>
                     <Row>
-                        <Col id="keepStill" className='px-2' xs={12} md={11}>
+                        <Col className='px-2 isInlineGrid' xs={12} md={11}>
                             { players.length >= 3 && (
                             <>
                                 <ButtonGroup className='mb-1'>
@@ -339,7 +339,7 @@ const NewGame = () => {
                                         <Button className="px-2 whiteBorder btnGroup2Items" key={`badButton_${idx}`} variant="danger" value={btn} onClick={handleCompleteBatClick}>{btn}</Button>
                                     ))}
                                 </ButtonGroup>
-                                <ButtonGroup className='mb-1'>
+                                <ButtonGroup className='mb-0'>
                                     <Button className="delete-Button" variant='warning' onClick={handleDelete}>Delete Stat</Button>
                                 </ButtonGroup>
                             </>
