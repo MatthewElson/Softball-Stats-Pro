@@ -9,7 +9,10 @@ import Table from 'react-bootstrap/Table';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ToggleButton from 'react-bootstrap/ToggleButton';
-
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import Dropdown from 'react-bootstrap/Dropdown';
+import DropdownButton from 'react-bootstrap/DropdownButton';
+import Form from 'react-bootstrap/Form';
 
 const TeamStats = () => {
 
@@ -40,11 +43,11 @@ const TeamStats = () => {
                 <Row><Col>
                     <NavBar teamName={teamName}/>
                 </Col></Row>
-                <Row><Col>
-                    <Button className="ut-button mb-2" onClick={() => setView(prev => !prev)}>Change View</Button>
+                <Row className='mb-2'><Col>
+                    <Button className="ut-button" onClick={() => setView(prev => !prev)}>Change View</Button>
                     <ToggleButton
                         id="toggle-show-subs"
-                         className="ut-button mb-2 ms-2"
+                        className="ut-button ms-2"
                         type="checkbox"
                         variant="secondary"
                         checked={showSubs}
@@ -53,6 +56,27 @@ const TeamStats = () => {
                     >
                     {showSubs ? "Hide Subs" : "Show Subs"}
                     </ToggleButton>
+                    <DropdownButton as={ButtonGroup} id={'dropdown-filters'} variant={'primary'} title={'Filters'}>
+                        <Form className='ms-2'>
+                            <Form.Check
+                                label="Show Subs"
+                                name="showSubs"
+                                type={'checkbox'}
+                                id={`showSubsCheckbox`}
+                            />
+                            <Form.Check
+                                label="Show 0 Games Played"
+                                name="noGamesPlayed"
+                                type={'checkbox'}
+                                id={`noGamesPlayedCheckbox`}
+                            />
+                            <Dropdown.Item eventKey="show0SGames"></Dropdown.Item>
+                        </Form>
+                    </DropdownButton>
+                    <DropdownButton as={ButtonGroup} id={'dropdown-sort'} variant={'primary'} title={'Sort'}>
+                        <Dropdown.Item eventKey="showSubs">Show Subs</Dropdown.Item>
+                        <Dropdown.Item eventKey="show0SGames">Show 0 Games Played</Dropdown.Item>
+                    </DropdownButton>
                 </Col></Row>
                 {view ? (
                     <Row><Col>
