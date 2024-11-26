@@ -107,6 +107,27 @@ body {
     width: 100% !important;
 }
 
+.removeMargin{
+    margin: 0;
+}
+
+.removePadding{
+    padding: 0;
+}
+
+.navBarPageTitle{
+    font-size: 4.5vh;
+    margin-right: 2%;
+    font-weight: 450;
+}
+
+.onlyHamburger{
+    border: none;
+    margin: 0;
+    padding: 0;
+    box-shadow: none !important;
+}
+
 .list-group.list-group-flush {
     min-height: 40px;
 }

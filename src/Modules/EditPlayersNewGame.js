@@ -15,7 +15,7 @@ const EditPlayers = ({ lineupToggle, setLineupToggle, handleLineupForm, allPlaye
         <Modal id="selectPlayersModal" show={lineupToggle} onHide={() => Globals.toggleCB(setLineupToggle)}>
             <Form onSubmit={handleLineupForm}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Edit Players</Modal.Title>
+                    <Modal.Title>Edit Lineup</Modal.Title>
                 </Modal.Header>
                 <Modal.Body id="selectPlayersModelBody">
                     <DndProvider backend={window.innerWidth < 800 ? TouchBackend : HTML5Backend} options={{enableMouseEvents: true}}>

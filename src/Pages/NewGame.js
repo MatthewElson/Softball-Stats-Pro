@@ -230,15 +230,14 @@ const NewGame = () => {
             <>
                 {lineupToggle && <EditLineup lineupToggle={lineupToggle} setLineupToggle={setLineupToggle} handleLineupForm={handleLineupForm} allPlayers={allPlayers} lineupCards={lineupCards} setLineupCards={setLineupCards} removePlayerFromFunctions={[setRbis, setGameStats, setAverage]} />}
                 {popupToggle && <SubmitStats popupToggle={popupToggle} setPopupToggle={setPopupToggle} setSecret={setSecret} handleSubmitStatsForm={handleSubmitStatsForm}/>}
-                        
+                <NavBar teamName={teamName}/>
                 <Container className={`${lineupToggle ? "blurred" : ""}`}>
-                    <Row xs={12}><Col><NavBar teamName={teamName}/></Col></Row>
-                    <Row xs={12} className='mb-2'>
-                        <Col className='isInlineGrid'>
-                            <ButtonGroup className='my-1'>
-                                <Button onClick={() => Globals.toggleCB(setLineupToggle)}>Lineup</Button>
+                    <Row xs={12} className='mb-1'>
+                        <Col className='isInlineGrid'>  
+                            <ButtonGroup>
+                                <Button onClick={() => Globals.toggleCB(setLineupToggle)} className={players.length < 3 ? 'w-100' : 'w-50 whiteBorder'}>Lineup</Button>
                                 { players.length >= 3 &&
-                                    <Button variant='success' onClick={()=> Globals.toggleCB(setPopupToggle)}>Submit Stats</Button>
+                                    <Button className='w-50 whiteBorder' variant='success' onClick={()=> Globals.toggleCB(setPopupToggle)}>Submit Stats</Button>
                                 }
                             </ButtonGroup>
                         </Col>
@@ -282,18 +281,18 @@ const NewGame = () => {
                             </Col>
                         }
                         { getNext3Batters(players, selectedPlayerIdx)[0]?.map((player) => (
-                            <Col xs="10" className={`mb-1 px-2 ${player === players[selectedPlayerIdx] ? "selected" : ""}`} key={'selected_' + selectedPlayerIdx}>
+                            <Col xs="10" className={`${player === players[selectedPlayerIdx] ? "selected" : ""}`} key={'selected_' + selectedPlayerIdx}>
                                 <label className={`${player === players[selectedPlayerIdx] ? "selectedPlayer" : "notSelectedPlayer"}`} htmlFor={player.name}>
                                     <ListGroup>
-                                        <ListGroup.Item className='lineupListGroupItemTop yPadding'>Batter # {(selectedPlayerIdx + 1)}</ListGroup.Item>
+                                        <ListGroup.Item className='lineupListGroupItemTop'>Batter # {(selectedPlayerIdx + 1)}</ListGroup.Item>
                                     </ListGroup>
                                     <ListGroup horizontal>
-                                        <ListGroup.Item className='lineupListGroupItem yPadding' id="battingPlayersName">{player.name?.substring(0,10)}</ListGroup.Item>
-                                        <ListGroup.Item className='lineupListGroupItem yPadding' id="battingPlayersAverage">{average[selectedPlayerIdx][0]}/{average[selectedPlayerIdx][1]}</ListGroup.Item>
-                                        <ListGroup.Item className='lineupListGroupItem yPadding' id="battingPlayersRBIs">{rbis[selectedPlayerIdx]} RBI's</ListGroup.Item>
+                                        <ListGroup.Item className='lineupListGroupItem' id="battingPlayersName">{player.name?.substring(0,10)}</ListGroup.Item>
+                                        <ListGroup.Item className='lineupListGroupItem' id="battingPlayersAverage">{average[selectedPlayerIdx][0]}/{average[selectedPlayerIdx][1]}</ListGroup.Item>
+                                        <ListGroup.Item className='lineupListGroupItem' id="battingPlayersRBIs">{rbis[selectedPlayerIdx]} RBIs</ListGroup.Item>
                                     </ListGroup>
                                     <ListGroup> 
-                                        <ListGroup.Item className='lineupListGroupItemBottom yPadding'>{gameStats[selectedPlayerIdx].length ? gameStats[selectedPlayerIdx].join(", ") : 'No Bats Yet'}</ListGroup.Item>
+                                        <ListGroup.Item className='lineupListGroupItemBottom'>{gameStats[selectedPlayerIdx].length ? gameStats[selectedPlayerIdx].join(", ") : 'No Bats Yet'}</ListGroup.Item>
                                     </ListGroup>
                                 </label>
                             </Col>
@@ -310,10 +309,10 @@ const NewGame = () => {
                         <Col xs={{ span: 10, offset: 1 }}>
                             <ListGroup>
                                 {getNext3Batters(players, selectedPlayerIdx)[1]?.map((player) => (
-                                    <ListGroup.Item key={`OnDeck${player.name}`} className='yPadding'><b>Deck: </b>{player.name}</ListGroup.Item>
+                                    <ListGroup.Item key={`OnDeck${player.name}`}><b>Deck: </b>{player.name}</ListGroup.Item>
                                 ))}
                                 {getNext3Batters(players, selectedPlayerIdx)[2]?.map((player) => (
-                                    <ListGroup.Item key={`OnDeck${player.name}`} className='yPadding'><b>Hole: </b>{player.name}</ListGroup.Item>
+                                    <ListGroup.Item key={`OnDeck${player.name}`}><b>Hole: </b>{player.name}</ListGroup.Item>
                                 ))}
                             </ListGroup>
                         </Col>
@@ -323,20 +322,20 @@ const NewGame = () => {
                             { players.length >= 3 && (
                             <>
                                 <ButtonGroup className='mb-1'>
-                                    <Button className="px-2 buttonGroupLabel" disabled>On Base</Button>
+                                    <Button className="px-1 buttonGroupLabel whiteBorder" disabled>On Base</Button>
                                     {goodButtons.map((btn, idx) =>
-                                        <Button className="px-2 whiteBorder" value={btn.playerOutcomes} key={`goodButton_${idx}`} onClick={handleCompleteBatClick}>{btn.buttonText}</Button>
+                                        <Button className="px-1 whiteBorder" value={btn.playerOutcomes} key={`goodButton_${idx}`} onClick={handleCompleteBatClick}>{btn.buttonText}</Button>
                                     )}
                                 </ButtonGroup>
                                 <ButtonGroup className='mb-1'>
-                                    <Button className="px-2 buttonGroupLabel" disabled>Points</Button>
-                                    <Button className="px-2 whiteBorder btnGroup2Items" value="RBI+" onClick={(e) => handleCompleteBatClick(e, 'add')}>RBI+</Button>
-                                    <Button className="px-2 whiteBorder btnGroup2Items" variant="warning" value="RBI-" onClick={(e) => handleCompleteBatClick(e, 'subtract')}>RBI-</Button>
+                                    <Button className="px-1 buttonGroupLabel whiteBorder" disabled>Points</Button>
+                                    <Button className="px-1 whiteBorder btnGroup2Items" value="RBI+" onClick={(e) => handleCompleteBatClick(e, 'add')}>RBI+</Button>
+                                    <Button className="px-1 whiteBorder btnGroup2Items" variant="warning" value="RBI-" onClick={(e) => handleCompleteBatClick(e, 'subtract')}>RBI-</Button>
                                 </ButtonGroup>
                                 <ButtonGroup className='mb-1'>
-                                    <Button className="px-2 buttonGroupLabel" disabled>Other</Button>
+                                    <Button className="px-1 buttonGroupLabel whiteBorder" disabled>Other</Button>
                                     {badButtons.map((btn, idx) => (
-                                        <Button className="px-2 whiteBorder btnGroup2Items" key={`badButton_${idx}`} variant="danger" value={btn} onClick={handleCompleteBatClick}>{btn}</Button>
+                                        <Button className="px-1 whiteBorder btnGroup2Items" key={`badButton_${idx}`} variant="danger" value={btn} onClick={handleCompleteBatClick}>{btn}</Button>
                                     ))}
                                 </ButtonGroup>
                                 <ButtonGroup className='mb-0'>
