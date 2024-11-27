@@ -4,73 +4,73 @@ import { db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
 import NavBar from '../Components/NavBar';
 import Container from 'react-bootstrap/Container';
-import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import DropdownButton from 'react-bootstrap/DropdownButton';
-import Dropdown from 'react-bootstrap/Dropdown';
 import Form from 'react-bootstrap/Form';
+import SplitButton from 'react-bootstrap/SplitButton';
 
 const TeamStats = () => {
 
     const { teamName } = useParams();
     const [players, setPlayers] = useState({});
     const [loading, setLoading] = useState(true);
-    const [view, setView] = useState('oneView');
+    const [view, setView] = useState('oneTableRadio');
     const [activeFilters, setActiveFilters] = useState(() => new Set());
-    const [sortBy, setSortBy] = useState('');
+    const [sortBy, setSortBy] = useState('name');
+    const [sortAsc, setSortAsc] = useState(true);
     const statNames = [                                        
         {
             id: 'name',
             fullName: 'Player Name',
-            shortName: 'Player',
+            stat: 'Player',
         },
         {
             id: 'games',
             fullName: 'Games',
-            shortName: 'G',
+            stat: 'G',
         },
         {
             id: 'atBat',
             fullName: 'Times At Bat',
-            shortName: 'AB',
+            stat: 'AB',
         },
         {
             id: 'firstBase',
             fullName: '1st Base',
-            shortName: '1B',
+            stat: '1B',
         },
         {
             id: 'secondBase',
             fullName: '2nd Base',
-            shortName: '2B',
+            stat: '2B',
         },
         {
             id: 'thirdBase',
             fullName: '3rd Base',
-            shortName: '3B',
+            stat: '3B',
         },
         {
             id: 'homeRun',
             fullName: 'Home Run',
-            shortName: 'HR',
+            stat: 'HR',
         },
         {
             id: 'rbis',
             fullName: 'RBIs',
-            shortName: 'RBI',
+            stat: 'RBI',
         },
         {
             id: 'strikeOut',
             fullName: 'Strikeouts',
-            shortName: 'K',
+            stat: 'K',
         },
         {
             id: 'averageBats',
             fullName: 'Average',
-            shortName: 'AVG',
+            stat: 'AVG',
         }
     ]
 
@@ -149,6 +149,37 @@ const TeamStats = () => {
         },
     ];
 
+    function showSortSVG(sortAsc){
+        return (sortAsc ? 
+            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" className="bi bi-sort-alpha-down" viewBox="0 0 16 16">
+                <path fillRule="evenodd" d="M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371zm1.57-.785L11 2.687h-.047l-.652 2.157z"/>
+                <path d="M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645zM4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293z"/>
+            </svg>
+            :
+            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" className="bi bi-sort-alpha-up-alt" viewBox="0 0 16 16">
+                <path d="M12.96 7H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645z"/>
+                <path fillRule="evenodd" d="M10.082 12.629 9.664 14H8.598l1.789-5.332h1.234L13.402 14h-1.12l-.419-1.371zm1.57-.785L11 9.688h-.047l-.652 2.156z"/>
+                <path d="M4.5 13.5a.5.5 0 0 1-1 0V3.707L2.354 4.854a.5.5 0 1 1-.708-.708l2-1.999.007-.007a.5.5 0 0 1 .7.006l2 2a.5.5 0 1 1-.707.708L4.5 3.707z"/>
+            </svg>
+        )
+    }
+
+    function determineSort(a, b, sortAsc){
+        if (sortAsc)
+            return a[sortBy] > b[sortBy] ? 1 : -1
+        else 
+            return a[sortBy] > b[sortBy] ? -1 : 1
+    }
+
+    function determineFilter(player, activeFilters){
+        const [showSubs, noGamesPlayed] = filterOptions;    
+        if(!activeFilters.has(showSubs.id) && player.isSub)
+            return false;
+        if(!activeFilters.has(noGamesPlayed.id) && !player.games)
+            return false
+        return true;
+    }
+
     useEffect(() => {
         const func = async () => {
             const docRef = doc(db, "teams", teamName);
@@ -160,12 +191,11 @@ const TeamStats = () => {
         func();
     }, [teamName]);
 
-
     return (
         <>
             <NavBar teamName={teamName}/>
-            <Container className='mx-0 px-2'>
-                {loading 
+            <Container className='mx-0'>
+                {loading
                     ? (<Row><Col><h1 className="loading">Loading Stats...</h1></Col></Row>) 
                     : (
                     <>
@@ -175,7 +205,7 @@ const TeamStats = () => {
                                 <DropdownButton as={ButtonGroup} id={'dropdown-views'} variant={'primary'} title={'Views'} className='w-100 whiteBorder' autoClose={'outside'}>
                                     <Form className='ps-2'>
                                         {viewOptions.map((element, idx) =>
-                                            <Form.Check 
+                                            <Form.Check
                                                 label={element.label}
                                                 name={element.id}
                                                 type={'radio'}
@@ -197,16 +227,20 @@ const TeamStats = () => {
                                                 id={element.id}
                                                 checked={activeFilters.has(element.id)}
                                                 key={element.id.replace(" ", "_") + idx}
-                                                onChange={ e => {
-                                                    console.log('e.v',e.currentTarget.checked);
-                                                    return e.currentTarget.checked ?  
-                                                    addItem(element.id) : 
-                                                    removeItem(element.id) }}
+                                                onChange={ e => e.currentTarget.checked ? addItem(element.id) : removeItem(element.id) }
                                             />
                                         )}
                                     </Form>
                                 </DropdownButton>
-                                <DropdownButton as={ButtonGroup} id={'dropdown-sort'} variant={'primary'} title={'Sort'} className='w-100 whiteBorder' autoClose='outside'>
+                                <SplitButton
+                                    id={'sortDirection'}
+                                    title={showSortSVG(sortAsc)}
+                                    as={ButtonGroup} 
+                                    variant={'primary'} 
+                                    className='w-100 whiteBorder directChildp-1'
+                                    autoClose='outside'
+                                    onClick={() => setSortAsc((prev => !prev))}
+                                >
                                     <Form className='ps-2'>
                                         {sortOptions.map((element, idx) =>
                                             <Form.Check
@@ -214,26 +248,28 @@ const TeamStats = () => {
                                                 name={element.id}
                                                 type={'radio'}
                                                 id={element.id}
-                                                checked={element.id === sortBy}
+                                                checked={element.stat === sortBy}
                                                 key={element.id.replace(" ", "_") + idx}
-                                                onChange={() => setSortBy(element.id)}
+                                                className='whiteBorder'
+                                                onChange={() => setSortBy(element.stat)}
                                             />
                                         )}
                                     </Form>
-                                </DropdownButton>
+                                </SplitButton>
                             </ButtonGroup>
                         </Col>
                     </Row>
-                    {view ? (
+                    {view === 'oneTableRadio' ? (
                         <Row><Col>
                             <Table striped bordered hover responsive size="sm">
                                 <thead>
                                     <tr>
-                                        {statNames.map(stat => <th key={stat.id}>{stat.shortName}</th> )}
+                                        {statNames.map(stat => <th key={stat.id}>{stat.stat}</th> )}
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {(true ?  players : players.sort((a,b) => a[sortBy.stat] > b[sortBy.stat]).filter(player => !player.isSub)).map((player, idx) => (
+                                    {players.sort((a,b) => determineSort(a,b, sortAsc))
+                                    .filter(player => determineFilter(player, activeFilters)).map((player, idx) => (
                                         <tr key={"stats_" + idx}>
                                             <td>{player.name}</td>
                                             <td>{player.games}</td>
@@ -265,7 +301,7 @@ const TeamStats = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {(filterOptions.get('showSubs').checked ?  players : players.filter(player => !player.isSub)).map((pl, idx) => (
+                                    {(activeFilters.has('showSubsCheckbox') ?  players : players.filter(player => !player.isSub)).map((pl, idx) => (
                                         <tr key={idx + 'T1'}>
                                             <td>{pl.name}</td>
                                             <td>{pl.games}</td>
@@ -290,7 +326,7 @@ const TeamStats = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {(filterOptions.showSubs.checked ?  players : players.filter(player => !player.isSub)).map((pl, idx) => (
+                                    {(activeFilters.has('showSubsCheckbox') ?  players : players.filter(player => !player.isSub)).map((pl, idx) => (
                                         <tr key={idx + 'T2'}>
                                             <td>{pl.name}</td>
                                             <td>{pl.games}</td>
