@@ -14,7 +14,7 @@ const MenuPage = () => {
     return (
         <>
             <NavBar pageName="Menu" showMenu={false}/>
-            <Container id="menuContainer" className='mx-0 px-2'>
+            <Container id="menuContainer" className='mx-0'>
                 <Row className='text-center' xs={1}>
                     <Col className="pb-3 d-grid" md={4}>
                         <Button onClick={() => navigate(`/new-game/${teamName}`)}>Record Game</Button>

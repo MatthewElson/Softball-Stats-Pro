@@ -54,7 +54,7 @@ const LoginPage = () => {
     return (
         <>
             <NavBar pageName="Softball Stats Pro" showMenu={false}/>
-            <Container className='mx-0 px-2'>
+            <Container className='mx-0'>
                 <Row>
                     <Col>
                         <Form onSubmit={handleSubmit} aria-label="Log in to Team">
