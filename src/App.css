@@ -1,0 +1,312 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,100;9..40,200;9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,800;9..40,900&display=swap');
+
+body {
+    min-width: 250px;
+    min-height: 510px;
+}
+
+#menuContainer {
+    max-width:'80%';
+}
+
+#selectPlayersModal{
+    min-width: 300px;
+    min-height: 350px;;
+}
+
+#selectPlayersModelBody {
+    height: 78vh;
+    
+    @media screen and (max-height: 750px) {
+        height: 72vh;
+    }
+    
+    @media screen and (max-height: 600px) {
+        height: 67vh;
+    }
+    
+    @media screen and (max-height: 450px) {
+        height: 54vh;
+    }
+	
+	overflow-y: auto;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.selectedPlayer {
+    border: 2px;
+    border-radius: 6px;
+    border-style: solid;
+}
+
+.notSelectedPlayer, .selectedPlayer, .lineupListGroupItem {
+    width: 100%;
+}
+
+.lineupListGroupItemTop {
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    padding-left: 8px;
+    padding-right: 8px;
+    font-weight: 600;
+}
+
+.lineupListGroupItem {
+    border-radius: 0 !important;
+    padding-left:4px;
+    padding-right: 4px;
+}
+
+.lineupListGroupItemBottom {
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+    padding-left:8px;
+    padding-right: 8px;
+    height: 6em;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.grayBack {
+    background-color: gray;
+}
+
+.borderTop {
+    border-top: 1px solid lightgray;
+}
+
+.bi-person-plus {
+    height: 100%;
+    width: auto;
+    margin-left: 0px !important;
+}
+
+.card > .list-group:first-child {
+    border-top-width: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.minHeight100{
+    min-height: 100%;
+}
+
+.fillAvailable{
+    height: -webkit-fill-available;
+}
+
+.maxHeight {
+    height: 100% !important;
+}
+
+.maxWidth {
+    width: 100% !important;
+}
+
+.removeMargin{
+    margin: 0;
+}
+
+.removePadding{
+    padding: 0;
+}
+
+.navBarPageTitle{
+    font-size: 4.5vh;
+    margin-right: 2%;
+    font-weight: 450;
+}
+
+.onlyHamburger{
+    border: none;
+    margin: 0;
+    padding: 0;
+    box-shadow: none !important;
+}
+
+.list-group.list-group-flush {
+    min-height: 40px;
+}
+
+#playersTabsContainer {
+    display: flex;
+    flex-flow: column;
+}
+
+.tab-content{
+    display: flex;
+}
+
+.tab-content>.active {
+    display: flex;
+}
+
+.isFullWidth{
+    width: 100%;
+}
+
+.isFullHeight, .tab-content{
+    flex: 1 1 auto;
+}
+
+#createLineupContainer{
+    padding: 0;
+}
+
+.goToNextBatter, .goToPreviousBatter {
+    height: 100%;
+    width: 100%;
+    max-height: 5em;
+}
+
+#battingPlayersName  {
+    width: 50%;
+}
+
+#battingPlayersAverage {
+    width: 20%;
+    display: flex;
+    justify-content: center;
+}
+
+#battingPlayersRBIs {
+    width: 30%;
+    display: flex;
+    justify-content: end;
+}
+
+#ourScore {
+    width: 40%;
+    padding-left:8px;
+    padding-right: 8px;
+}
+
+#theirScore {
+    width: 60%;
+    padding-left:8px;
+    padding-right: 8px;
+}
+/* 
+@media screen and (max-height: 530px) {
+    .yMargins{
+        margin-top: 1%;
+        margin-bottom: 1%;
+    }
+
+    .yPadding{
+        padding-top: 1%;
+        padding-bottom: 1%;
+    }
+}
+@media screen and (min-height: 530px) {
+    .yMargins{
+        margin-top: 1.5%;
+        margin-bottom: 1.5%;
+    }
+
+    .yPadding{
+        padding-top: 1%;
+        padding-bottom: 1%;
+    }
+}
+@media screen and (min-height: 570px) {
+    .yMargins{
+        margin-top: 3.5%;
+        margin-bottom: 3.5%;
+    }
+
+    .yPadding{
+        padding-top: 1%;
+        padding-bottom: 1%;
+    }
+}
+
+@media screen and (min-height: 610px) {
+    .yMargins{
+        padding-top: 4.5%;
+        padding-bottom: 4.5%;
+    }
+
+    .yPadding{
+        padding-top: 1%;
+        padding-bottom: 1%;
+    }
+} */
+
+@media screen and (max-width: 500px) {
+    .nav.nav-tabs > .nav-item > .nav-link {
+        padding: 4px 8px !important;
+    }
+
+    #currentBatterRow, #currentBatterCol, .goToPreviousBatter, .goToNextBatter, #selectPlayersModelBody > *, #newLineupContainer, #playersTabsContainer, .currentBatterNav {
+        padding: 0 0.2em;
+    } 
+}
+
+@media screen and (min-width:500px) {
+    #battingPlayersName {
+        width: 40%;
+    }
+    
+    #battingPlayersAverage {
+        width: 25%;
+    }
+    
+    #battingPlayersRBIs {
+        width: 35%;
+    }
+
+    .lineupListGroupItem.list-group-item{
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+}
+
+@media screen and (max-height: 700px) {
+    .lineupListGroupItemBottom {
+        height: 4em;
+    }
+    .lineupListGroupItem.list-group-item {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+}
+
+/* #keepStill {
+    position: absolute;
+    top: 70%;
+    display: inline-grid;
+} */
+
+.isInlineGrid {
+    display: inline-grid;
+}
+
+.whiteBorder {
+    border: 1px solid #FFF;
+}
+
+.directChildp-1 > button {
+    padding: 0.25rem !important;
+}
+
+.buttonGroupLabel {
+    max-width: 27%;
+    min-width: 27%;
+}
+
+/*based on 
+    + 2 px for the extra borders    
+    .buttonGroupLabel {
+        max-width: 27%;
+        min-width: 27%;
+    }
+*/
+.btnGroup2Items {
+    max-width: calc(36.5% + 1px);
+    min-width: calc(36.5% + 1px);
+}
