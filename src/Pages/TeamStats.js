@@ -172,7 +172,7 @@ const TeamStats = () => {
     }
 
     function determineFilter(player, activeFilters){
-        const [showSubs, noGamesPlayed] = filterOptions;    
+        const [showSubs, noGamesPlayed] = filterOptions;
         if(!activeFilters.has(showSubs.id) && player.isSub)
             return false;
         if(!activeFilters.has(noGamesPlayed.id) && !player.games)
@@ -301,7 +301,8 @@ const TeamStats = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {(activeFilters.has('showSubsCheckbox') ?  players : players.filter(player => !player.isSub)).map((pl, idx) => (
+                                {players.sort((a,b) => determineSort(a,b, sortAsc))
+                                    .filter(player => determineFilter(player, activeFilters)).map((pl, idx) => (
                                         <tr key={idx + 'T1'}>
                                             <td>{pl.name}</td>
                                             <td>{pl.games}</td>
@@ -326,7 +327,8 @@ const TeamStats = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {(activeFilters.has('showSubsCheckbox') ?  players : players.filter(player => !player.isSub)).map((pl, idx) => (
+                                {players.sort((a,b) => determineSort(a,b, sortAsc))
+                                    .filter(player => determineFilter(player, activeFilters)).map((pl, idx) => (
                                         <tr key={idx + 'T2'}>
                                             <td>{pl.name}</td>
                                             <td>{pl.games}</td>
