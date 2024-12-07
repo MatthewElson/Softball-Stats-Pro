@@ -32,6 +32,10 @@ body {
 	overflow-y: auto;
 }
 
+.underlineTableHeader{
+    text-decoration: underline;
+}
+
 .hidden {
     display: none !important;
 }

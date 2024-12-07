@@ -31,7 +31,8 @@ function MenuItems(teamName, pageName, showMenu) {
             <Offcanvas.Body>
               <Nav className="me-auto">
                 <Nav.Link href={`/new-game/${teamName}`}><span className='text-primary'>New Game</span></Nav.Link>
-                <Nav.Link href={`/team-stats/${teamName}`}><span className='text-primary'>Stats</span></Nav.Link>
+                <Nav.Link href={`/player-stats/${teamName}`}><span className='text-primary'>Players Stats</span></Nav.Link>
+                <Nav.Link href={`/team-stats/${teamName}`}><span className='text-primary'>Team Stats</span></Nav.Link>
                 <Nav.Link href={`/manage-team/${teamName}`}><span className='text-primary'>Manage Team</span></Nav.Link>
                 <Nav.Link href="/"><span className='text-primary'>Sign Out</span></Nav.Link>
               </Nav>

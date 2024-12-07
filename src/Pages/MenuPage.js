@@ -23,6 +23,9 @@ const MenuPage = () => {
                         <Button onClick={() => navigate(`/manage-team/${teamName}`)}>Manage Team</Button>
                     </Col>
                     <Col className="pb-3 d-grid" md={4}>
+                        <Button onClick={() => navigate(`/player-stats/${teamName}`)}>View Player Stats</Button>
+                    </Col>
+                    <Col className="pb-3 d-grid" md={4}>
                         <Button onClick={() => navigate(`/team-stats/${teamName}`)}>View Team Stats</Button>
                     </Col>
                     <Col className="pb-3 d-grid">
