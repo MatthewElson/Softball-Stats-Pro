@@ -34,23 +34,44 @@ const NewGame = () => {
     const [ourScore, setOurScore] = useState(0);
     const [theirScore, setTheirScore] = useState(0);
 
-
     useEffect(() => {
         const func = async () => {
-            const docRef = doc(db, "teams", teamName);
-            const docSnap = await getDoc(docRef);
-            setData(docSnap.data());
-            const playerData = docSnap.data().players;
+            //check the cache
+            let teamDataJSON = sessionStorage.getItem(teamName + 'Data');
+            let docRef = null;
+            let docSnap = null;
+            let teamPlayersInfo = null;
+            const wasTeamUpdated = sessionStorage.getItem(teamName + 'UpdatePlayers');
+            if(!teamDataJSON || wasTeamUpdated){
+                //get data from database
+                docRef = doc(db, "teams", teamName);
+                docSnap = await getDoc(docRef);
+                teamPlayersInfo = docSnap.data();
+                //cache it so we don't have to keep making calls to the db
+                sessionStorage.setItem(teamName + 'Data', JSON.stringify({
+                    teamInfo: teamPlayersInfo,
+                    dateCreated: Date.now(),
+                }));
+                sessionStorage.removeItem(teamName + 'UpdatePlayers');
+            }
+            
+            if(teamDataJSON)
+                teamPlayersInfo = JSON.parse(teamDataJSON);
+            
+            setData(teamPlayersInfo);
+            const playerData = teamPlayersInfo.teamInfo.players;
             setAllPlayers(playerData);//.players.sort((a, b) => a.name > b.name ? 1 : -1));
             setLoading(false);
             const averagesNeeded = [];
             const gameStatsNeeded = [];
             const rbisNeeded = [];
-            for (let i = 0; i < playerData.length; i++) {
+            
+            playerData.forEach(() => {
                 averagesNeeded.push([0, 0]);   
                 gameStatsNeeded.push([]);
                 rbisNeeded.push(0);
-            }
+            });
+
             setAverage(averagesNeeded);
             setGameStats(gameStatsNeeded);
             setRbis(rbisNeeded);
@@ -131,25 +152,28 @@ const NewGame = () => {
         try {
             if (data.secret === secret) {
                 
-                for (const player of players) {
-                    const idx = players.indexOf(player);
-                    
-                    const docRef = doc(db, "teams", teamName);
-                    const docSnap = await getDoc(docRef);
-                    const teamPlayers = docSnap.data().players;
+                const docRef = doc(db, "teams", teamName);
+                const docSnap = await getDoc(docRef);
+                const teamPlayers = docSnap.data().players;
 
-                    const updatedPlayers = teamPlayers.map((plyr) => {
+                for (const player of players) {
+                    const updatedPlayers = teamPlayers.map((tempPlayer) => {
+                        const battingAverage = Globals.calculateAverage(tempPlayer);
+                        if(!battingAverage)
+                            return tempPlayer;
+
                         const prevStats = {
-                            singles: plyr.singles,
-                            doubles: plyr.doubles,
-                            triples: plyr.triples,
-                            homeruns: plyr.homeruns,
-                            outs: plyr.outs,
-                            strikeouts: plyr.strikeouts,
-                            rbis: plyr.rbis,
-                            games: plyr.games,
+                            singles: player.singles,
+                            doubles: player.doubles,
+                            triples: player.triples,
+                            homeruns: player.homeruns,
+                            outs: player.outs,
+                            strikeouts: player.strikeouts,
+                            rbis: player.rbis,
+                            games: player.games,
                         };
-                        if (player.name === plyr.name) {
+                        if (lineupCards.some(card => card.name === player.name)) {
+                            const idx = players.map(e => e.name).indexOf(player.name);
                             gameStats[idx].forEach((type) => {
                                 if (type === "Single") {
                                     prevStats.singles += 1;
@@ -169,9 +193,9 @@ const NewGame = () => {
                             if (gameStats[idx].length > 0){
                                 prevStats.games += 1;
                             }
-                            return { ...plyr, ...prevStats };
+                            return { ...player, ...prevStats };
                         }
-                        return plyr;
+                        return player;
                     });
                     await updateDoc(docRef, { players: updatedPlayers });
                 }
@@ -351,8 +375,7 @@ const NewGame = () => {
                 </Container>
             </>)}
         </>
-    )
-    }
+    )}
     catch(e){
        console.error(e);
     }

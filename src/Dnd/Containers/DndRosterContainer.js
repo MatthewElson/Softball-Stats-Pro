@@ -37,7 +37,7 @@ const DndRosterContainer = ({lineupCards, setLineupCards, allPlayers, removePlay
       return (
         <Card bg={backgroundColor} className='isFullWidth'>
           <ListGroup variant="flush" ref={drop} className='isFullHeight isFullWidth'>
-            {cards.map( (player,idx) => !Object.keys(player).length ? null : <PlayerPlaying key={capitalName + "Bench" + idx} player={player} setFunction={setFunction} removePlayerFromFunctions={removePlayerFromFunctions} idx={idx} type={type} name={name}/> )}
+            {cards.sort((a,b) => a.name > b.name ? 1 : -1).map( (player,idx) => !Object.keys(player).length ? null : <PlayerPlaying key={capitalName + "Bench" + idx} player={player} setFunction={setFunction} removePlayerFromFunctions={removePlayerFromFunctions} idx={idx} type={type} name={name}/> )}
           </ListGroup>
         </Card>
       )

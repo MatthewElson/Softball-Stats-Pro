@@ -46,6 +46,16 @@ function useDndDrag(lineupCards, type, item, setFunction, idx, from, removePlaye
     type: type,
     item: item,
     end: (item, monitor) => {
+      console.log("------------------------------------------");
+      console.log('from :', from);
+      console.log('idx :', idx);
+      console.log('item :', item);
+      console.log('type :', type);
+      console.log('lineupCards :', lineupCards);
+      console.log('monitor :', monitor);
+      console.log('item :', item);
+      console.log("------------------------------------------");
+      
       const dropResult = monitor.getDropResult();
       if (item && dropResult) {
         // console.log(`You dropped ${item.name} into ${dropResult.name}!`);
@@ -53,7 +63,7 @@ function useDndDrag(lineupCards, type, item, setFunction, idx, from, removePlaye
 
         // setLineupCards([...lineupCards, item]);
         setFunction((prev) => update(prev, {$push:[{...item, from: from}]}));
-
+        
         if(removePlayerFromFunctions.length){
           console.log('idx', idx);
           console.log(lineupCards);
