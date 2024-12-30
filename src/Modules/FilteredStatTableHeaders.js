@@ -17,7 +17,7 @@ const FilteredHeaders = ({statNames, tableNumber}) => {
         <OverlayTrigger
             key= {stat.id + "Tooltip"}
             placement="top"
-            trigger={"hover"}
+            trigger={"click"}
             overlay= {
                 <Tooltip id={`tooltip-above`}>
                     {stat.fullName}
