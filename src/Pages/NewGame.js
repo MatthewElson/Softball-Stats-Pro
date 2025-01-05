@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 import { db } from "../firebase";
-import { doc, updateDoc, getDoc} from "firebase/firestore";
+import { doc, updateDoc, getDoc, arrayUnion, writeBatch} from "firebase/firestore";
 // import CloseButton from 'react-bootstrap/CloseButton';
 import Button from 'react-bootstrap/Button';
 import NavBar from '../Components/NavBar';
@@ -29,10 +29,17 @@ const NewGame = () => {
     const badButtons = ["Out", "Strikeout"];
     const [data, setData] = useState({});
     const [loading, setLoading] = useState(true);
+    const [gameType, setGameType] = useState('');
     const [allPlayers, setAllPlayers] = useState();
     const [lineupCards, setLineupCards] = useState([]);
     const [ourScore, setOurScore] = useState(0);
     const [theirScore, setTheirScore] = useState(0);
+    const [opponentTeamName, setOpponentTeamName] = useState("");
+    const [saveGameResult, setSaveGameResult] = useState({
+        show: false,
+        success: false,
+        message: ''
+    });
 
     useEffect(() => {
         const func = async () => {
@@ -150,11 +157,12 @@ const NewGame = () => {
         e.preventDefault();
         
         try {
-            if (data.secret === secret) {
-                
+            if (data.teamInfo.secret === secret) {
+                // get current players information
                 const docRef = doc(db, "teams", teamName);
                 const docSnap = await getDoc(docRef);
                 const teamPlayers = docSnap.data().players;
+                const batch = writeBatch(db);
 
                 for (const player of players) {
                     const updatedPlayers = teamPlayers.map((tempPlayer) => {
@@ -197,16 +205,49 @@ const NewGame = () => {
                         }
                         return player;
                     });
-                    await updateDoc(docRef, { players: updatedPlayers });
+                    batch.update(docRef, { players: updatedPlayers });
                 }
-                alert("Stats have been successfully added");
-                Globals.toggleCB(setPopupToggle);
+
+                const currentYear = new Date().getFullYear();
+                let outcome = 1;
+                if(ourScore > theirScore) 
+                    outcome = 2;
+                else if (ourScore < theirScore)
+                    outcome = 0;
+                
+                const sessionRef = doc(db, "teams", teamName, "allSeasons", currentYear.toString());
+                batch.update(sessionRef, { games: arrayUnion({
+                    battingOrder: players.map(person => person.name),
+                    datePlayed: new Date(),
+                    isPlayoffs: gameType === "playoff",
+                    isPractice: gameType === "practice",
+                    opponentTeamName: opponentTeamName,
+                    ourScore: ourScore,
+                    outcome: outcome,
+                    theirScore: theirScore,
+                })});
+
+                await batch.commit();
+
+                setSaveGameResult({
+                    show: true,
+                    success: true,
+                    message: 'Stats have been successfully added'
+                });
             } else {
-                alert("Wrong team password");
+                setSaveGameResult({
+                    show: true,
+                    success: false,
+                    message: 'Wrong team password'
+                });
             }
             setSecret("");
         } catch (error) {
-           alert(`Error updating document: ${error}`);        
+            setSaveGameResult({
+                show: true,
+                success: false,
+                message: `Error updating document: ${error}`
+            });    
         }
     };
 
@@ -253,11 +294,11 @@ const NewGame = () => {
             {loading ? (<><h1 className="loading">Loading Game...</h1><NavBar teamName={teamName}/></>) : (
             <>
                 {lineupToggle && <EditLineup lineupToggle={lineupToggle} setLineupToggle={setLineupToggle} handleLineupForm={handleLineupForm} allPlayers={allPlayers} lineupCards={lineupCards} setLineupCards={setLineupCards} removePlayerFromFunctions={[setRbis, setGameStats, setAverage]} />}
-                {popupToggle && <SubmitStats popupToggle={popupToggle} setPopupToggle={setPopupToggle} setSecret={setSecret} handleSubmitStatsForm={handleSubmitStatsForm}/>}
+                {popupToggle && <SubmitStats popupToggle={popupToggle} setPopupToggle={setPopupToggle} setSecret={setSecret} setOpponentTeamName={setOpponentTeamName} handleSubmitStatsForm={handleSubmitStatsForm} setGameType={setGameType} saveGameResult={saveGameResult}/>}
                 <NavBar teamName={teamName}/>
                 <Container className={`${lineupToggle ? "blurred" : ""}`}>
                     <Row xs={12} className='mb-1'>
-                        <Col className='isInlineGrid'>  
+                        <Col className='isInlineGrid'>
                             <ButtonGroup>
                                 <Button onClick={() => Globals.toggleCB(setLineupToggle)} className={players.length < 3 ? 'w-100' : 'w-50 whiteBorder'}>Lineup</Button>
                                 { players.length >= 3 &&
