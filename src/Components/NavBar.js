@@ -4,7 +4,7 @@ import Offcanvas from 'react-bootstrap/Offcanvas';
 
 function Navigation( { teamName = "", pageName = "", showMenu = true }) {
   return (
-    <Navbar bg="primary" data-bs-theme="dark" expand="lg" className='removeMargin removePadding py-2 px-2 mb-4'>
+    <Navbar bg="primary" data-bs-theme="dark" expand="lg" className='py-1 px-2 mb-2'>
       {MenuItems(teamName, pageName, showMenu )}
     </Navbar>
   );
@@ -14,7 +14,7 @@ function MenuItems(teamName, pageName, showMenu) {
   return (
     <>
         {/* <Navbar.Brand className='removePadding text-primary'><h1 className='removeMargin removePadding'>{pageName ? pageName : teamName}</h1></Navbar.Brand> */}
-        <Navbar.Brand className='removePadding navBarPageTitle'>{pageName ? pageName : teamName}</Navbar.Brand>
+        <Navbar.Brand className='navBarPageTitle'>{pageName ? pageName : teamName}</Navbar.Brand>
         {showMenu && <>
           <Navbar.Toggle className='onlyHamburger' aria-controls="basic-navbar-nav"/>
           <Navbar.Offcanvas
