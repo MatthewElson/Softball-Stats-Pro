@@ -41,7 +41,10 @@ AllGlobals.prototype.removeItem = (item, setActiveFilters) => {
     });
 }
 
-AllGlobals.prototype.calculateAverage = (player) => ((player.singles + player.doubles + player.triples + player.homeruns) / (player.singles + player.doubles + player.triples + player.homeruns + player.strikeouts + player.outs)).toFixed(2);
+AllGlobals.prototype.calculateAverage = (player) => {
+    const average = (player.singles + player.doubles + player.triples + player.homeruns) / (player.singles + player.doubles + player.triples + player.homeruns + player.strikeouts + player.outs);
+    return isNaN(average) ? 0 : average.toFixed(2);
+};
 
 
 const Globals = new AllGlobals();

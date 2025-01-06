@@ -48,18 +48,17 @@ const NewGame = () => {
             let docRef = null;
             let docSnap = null;
             let teamPlayersInfo = null;
-            const wasTeamUpdated = sessionStorage.getItem(teamName + 'UpdatePlayers');
-            if(!teamDataJSON || wasTeamUpdated){
+            if(!teamDataJSON){
                 //get data from database
                 docRef = doc(db, "teams", teamName);
                 docSnap = await getDoc(docRef);
-                teamPlayersInfo = docSnap.data();
+                const dbInfo = docSnap.data();
                 //cache it so we don't have to keep making calls to the db
-                sessionStorage.setItem(teamName + 'Data', JSON.stringify({
-                    teamInfo: teamPlayersInfo,
+                teamPlayersInfo = {
+                    teamInfo: dbInfo,
                     dateCreated: Date.now(),
-                }));
-                sessionStorage.removeItem(teamName + 'UpdatePlayers');
+                }
+                sessionStorage.setItem(teamName + 'Data', JSON.stringify(teamPlayersInfo));
             }
             
             if(teamDataJSON)
