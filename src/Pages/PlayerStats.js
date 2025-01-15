@@ -2,17 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
+import FilteredHeaders from '../Modules/FilteredStatTableHeaders.js';
 import NavBar from '../Components/NavBar';
 import Container from 'react-bootstrap/Container';
 import Table from 'react-bootstrap/Table';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Globals from '../Globals';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Form from 'react-bootstrap/Form';
 import SplitButton from 'react-bootstrap/SplitButton';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Tooltip from 'react-bootstrap/Tooltip';
 
 const TeamStats = () => {
 
@@ -28,64 +28,63 @@ const TeamStats = () => {
             id: 'name',
             fullName: 'Player Name',
             stat: 'Player',
+            table: 0
         },
         {
             id: 'games',
             fullName: 'Games',
             stat: 'G',
+            table: 0
         },
         {
             id: 'atBat',
             fullName: 'Times At Bat',
             stat: 'AB',
+            table: 0
         },
         {
             id: 'firstBase',
             fullName: '1st Base',
             stat: '1B',
+            table: 1
         },
         {
             id: 'secondBase',
             fullName: '2nd Base',
             stat: '2B',
+            table: 1
         },
         {
             id: 'thirdBase',
             fullName: '3rd Base',
             stat: '3B',
+            table: 1
         },
         {
             id: 'homeRun',
             fullName: 'Home Run',
             stat: 'HR',
+            table: 1
         },
         {
             id: 'rbis',
             fullName: 'RBIs',
             stat: 'RBI',
+            table: 2
         },
         {
             id: 'strikeOut',
             fullName: 'Strikeouts',
             stat: 'K',
+            table: 2
         },
         {
             id: 'averageBats',
             fullName: 'Average',
             stat: 'AVG',
+            table: 2
         }
     ]
-
-    const addItem = item => {
-        setActiveFilters(prev => new Set(prev).add(item));
-    }
-    const removeItem = item => {
-        setActiveFilters(prev => {
-            const next = new Set(prev);
-            next.delete(item);
-            return next;
-        });
-    }
 
     const viewOptions = [
         {
@@ -166,16 +165,12 @@ const TeamStats = () => {
         )
     }
 
-    function calculateAverage(player) {
-            return ((player.singles + player.doubles + player.triples + player.homeruns) / (player.singles + player.doubles + player.triples + player.homeruns + player.strikeouts + player.outs)).toFixed(2);
-    }
-
     function determineSort(a, b, sortAsc) {
         if (sortBy === 'avg') { 
             if(sortAsc)
-                return calculateAverage(a) > calculateAverage(b) ? 1 : -1;
+                return Globals.calculateAverage(a) > Globals.calculateAverage(b) ? 1 : -1;
             else
-                return calculateAverage(a) > calculateAverage(b) ? -1 : 1;
+                return Globals.calculateAverage(a) > Globals.calculateAverage(b) ? -1 : 1;
         }
         if (sortAsc)
             return a[sortBy] > b[sortBy] ? 1 : -1
@@ -194,14 +189,16 @@ const TeamStats = () => {
 
     useEffect(() => {
         const func = async () => {
+            sessionStorage.getItem(teamName + 'UpdatePlayers', Date.now());
             const docRef = doc(db, "teams", teamName);
             const docSnap = await getDoc(docRef);
-            setPlayers(docSnap.data().players.sort());
+            setPlayers(docSnap.data().players);
             setLoading(false);
         }
 
         func();
     }, [teamName]);
+
 
     return (
         <>
@@ -239,7 +236,7 @@ const TeamStats = () => {
                                                 id={element.id}
                                                 checked={activeFilters.has(element.id)}
                                                 key={element.id.replace(" ", "_") + idx}
-                                                onChange={ e => e.currentTarget.checked ? addItem(element.id) : removeItem(element.id) }
+                                                onChange={ e => e.currentTarget.checked ? Globals.addItem(element.id, setActiveFilters) : Globals.removeItem(element.id, setActiveFilters) }
                                             />
                                         )}
                                     </Form>
@@ -249,7 +246,7 @@ const TeamStats = () => {
                                     title={showSortSVG(sortAsc)}
                                     as={ButtonGroup} 
                                     variant={'primary'} 
-                                    className='w-100 whiteBorder directChildp-1'
+                                    className='w-100 whiteBorder directChild'
                                     autoClose='outside'
                                     onClick={() => setSortAsc((prev => !prev))}
                                 >
@@ -276,20 +273,7 @@ const TeamStats = () => {
                             <Table striped bordered hover responsive size="sm">
                                 <thead>
                                     <tr>
-                                        {statNames.map(stat => (                                            
-                                            <OverlayTrigger
-                                                key= {stat.id + "Tooltip"}
-                                                placement="top"
-                                                trigger={"click"}
-                                                overlay= {
-                                                    <Tooltip id={`tooltip-above`}>
-                                                        {stat.fullName}
-                                                    </Tooltip>
-                                                }
-                                            >
-                                                <th><span className='underlineTableHeader'>{stat.stat}</span></th> 
-                                            </OverlayTrigger> 
-                                        ))}
+                                        <FilteredHeaders statNames={statNames} tableNumber={0} />
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -316,13 +300,7 @@ const TeamStats = () => {
                             <Table striped bordered hover responsive size="sm">
                                 <thead>
                                     <tr>
-                                        <th>Player</th>
-                                        <th>G</th>
-                                        <th>AB</th>
-                                        <th>1B</th>
-                                        <th>2B</th>
-                                        <th>3B</th>
-                                        <th>HR</th>
+                                        <FilteredHeaders statNames={statNames} tableNumber={1} />
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -343,16 +321,11 @@ const TeamStats = () => {
                             <Table striped bordered hover responsive size="sm">
                                 <thead>
                                     <tr>
-                                        <th>Player</th>
-                                        <th>G</th>
-                                        <th>AB</th>
-                                        <th>RBI</th>
-                                        <th>K</th>
-                                        <th>AVG</th>
+                                        <FilteredHeaders statNames={statNames} tableNumber={2} />
                                     </tr>
                                 </thead>
                                 <tbody>
-                                {players.sort((a,b) => determineSort(a,b, sortAsc))
+                                {players
                                     .filter(player => determineFilter(player, activeFilters)).map((pl, idx) => (
                                         <tr key={idx + 'T2'}>
                                             <td>{pl.name}</td>

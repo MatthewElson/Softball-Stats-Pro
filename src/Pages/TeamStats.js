@@ -1,29 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { db } from "../firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, getDocs, collection } from "firebase/firestore";
+import Globals from '../Globals';
 import NavBar from '../Components/NavBar';
 import Container from 'react-bootstrap/Container';
-import Table from 'react-bootstrap/Table';
+// import Table from 'react-bootstrap/Table';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Form from 'react-bootstrap/Form';
 import SplitButton from 'react-bootstrap/SplitButton';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Tooltip from 'react-bootstrap/Tooltip';
+// import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+// import Tooltip from 'react-bootstrap/Tooltip';
 
 const TeamStats = () => {
 
     const { teamName } = useParams();
-    const [players, setPlayers] = useState({});
+    // const [players, setPlayers] = useState({});
     const [loading, setLoading] = useState(true);
     const [view, setView] = useState('oneTableRadio');
     const [activeFilters, setActiveFilters] = useState(() => new Set());
     const [sortBy, setSortBy] = useState('name');
     const [sortAsc, setSortAsc] = useState(true);
-    const [showToolTip, setShowToolTip] = useState('');
+    // const [showToolTip, setShowToolTip] = useState('');
     /*
     Season year
     Game #
@@ -105,29 +106,36 @@ const TeamStats = () => {
         )
     }
 
+    // function determineSort(a, b, sortAsc) {
+    //     if (sortAsc)
+    //         return a[sortBy] > b[sortBy] ? 1 : -1
+    //     else 
+    //         return a[sortBy] > b[sortBy] ? -1 : 1
+    // }
 
-    function determineSort(a, b, sortAsc) {
-        if (sortAsc)
-            return a[sortBy] > b[sortBy] ? 1 : -1
-        else 
-            return a[sortBy] > b[sortBy] ? -1 : 1
-    }
-
-    function determineFilter(player, activeFilters) {
-        const [showSubs, noGamesPlayed] = filterOptions;
-        if(!activeFilters.has(showSubs.id) && player.isSub)
-            return false;
-        if(!activeFilters.has(noGamesPlayed.id) && !player.games)
-            return false
-        return true;
-    }
+    // function determineFilter(player, activeFilters) {
+    //     const [showSubs, noGamesPlayed] = filterOptions;
+    //     if(!activeFilters.has(showSubs.id) && player.isSub)
+    //         return false;
+    //     if(!activeFilters.has(noGamesPlayed.id) && !player.games)
+    //         return false
+    //     return true;
+    // }
 
     useEffect(() => {
         const func = async () => {
-            const docRef = doc(db, "teams", teamName);
+            const docRef = doc(db, "teams", teamName,);
             const docSnap = await getDoc(docRef);
-            setPlayers(docSnap.data().players.sort());
+            console.log('docSnap.data() :', docSnap.data());
+            const userCartsCollectionRef = collection(db, 'teams', teamName, 'allSeasons');
+            const querySnapshot = await getDocs(userCartsCollectionRef);
+            querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+              });
+            // setPlayers(docSnap.data().players.sort());
             setLoading(false);
+
         }
 
         func();
@@ -169,7 +177,7 @@ const TeamStats = () => {
                                                 id={element.id}
                                                 checked={activeFilters.has(element.id)}
                                                 key={element.id.replace(" ", "_") + idx}
-                                                onChange={ e => e.currentTarget.checked ? addItem(element.id) : removeItem(element.id) }
+                                                onChange={ e => e.currentTarget.checked ? Globals.addItem(element.id, setActiveFilters) : Globals.removeItem(element.id, setActiveFilters) }
                                             />
                                         )}
                                     </Form>
@@ -179,7 +187,7 @@ const TeamStats = () => {
                                     title={showSortSVG(sortAsc)}
                                     as={ButtonGroup} 
                                     variant={'primary'} 
-                                    className='w-100 whiteBorder directChildp-1'
+                                    className='w-100 whiteBorder directChild'
                                     autoClose='outside'
                                     onClick={() => setSortAsc((prev => !prev))}
                                 >
@@ -202,46 +210,10 @@ const TeamStats = () => {
                         </Col>
                     </Row>
                     <Row><Col>
-                        {seasonsInfo.map(season => {
+                        {/* {seasonsInfo.map(season => {
+                            <h2>{season.year}</h2>
 
-                        })}
-                        <h2></h2>
-                        <Table striped bordered hover responsive size="sm">
-                            <thead>
-                                <tr>
-                                    {statNames.map(stat => (
-                                        <OverlayTrigger
-                                            key= {stat.id + "Tooltip"}
-                                            placement="top"
-                                            overlay= {
-                                                <Tooltip id={`tooltip-above`}>
-                                                    {stat.fullName}
-                                                </Tooltip>
-                                            }
-                                        >
-                                            <th><span className='underlineTableHeader'>{stat.stat}</span></th> 
-                                        </OverlayTrigger>
-                                    ))}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {players.sort((a,b) => determineSort(a,b, sortAsc))
-                                .filter(player => determineFilter(player, activeFilters)).map((player, idx) => (
-                                    <tr key={"stats_" + idx}>
-                                        <td>{player.name}</td>
-                                        <td>{player.games}</td>
-                                        <td>{player.singles + player.doubles + player.triples + player.homeruns + player.strikeouts + player.outs}</td>
-                                        <td>{player.singles}</td>
-                                        <td>{player.doubles}</td>
-                                        <td>{player.triples}</td>
-                                        <td>{player.homeruns}</td>
-                                        <td>{player.rbis}</td>
-                                        <td>{player.strikeouts}</td>
-                                        <td>{((player.singles + player.doubles + player.triples + player.homeruns) / (player.singles + player.doubles + player.triples + player.homeruns + player.strikeouts + player.outs)).toFixed(2)}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </Table>
+                        })} */}
                     </Col></Row>
                 </>  
                 )}

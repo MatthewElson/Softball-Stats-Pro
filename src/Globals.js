@@ -29,5 +29,23 @@ AllGlobals.prototype.taskNumbers = Object.freeze({
     remove: 3
 })
 
+AllGlobals.prototype.addItem = (item, setActiveFilters) => {
+    setActiveFilters(prev => new Set(prev).add(item));
+}
+
+AllGlobals.prototype.removeItem = (item, setActiveFilters) => {
+    setActiveFilters(prev => {
+        const next = new Set(prev);
+        next.delete(item);
+        return next;
+    });
+}
+
+AllGlobals.prototype.calculateAverage = (player) => {
+    const average = (player.singles + player.doubles + player.triples + player.homeruns) / (player.singles + player.doubles + player.triples + player.homeruns + player.strikeouts + player.outs);
+    return isNaN(average) ? 0 : average.toFixed(2);
+};
+
+
 const Globals = new AllGlobals();
 export default Globals;
