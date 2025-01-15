@@ -106,22 +106,21 @@ const TeamStats = () => {
         )
     }
 
+    // function determineSort(a, b, sortAsc) {
+    //     if (sortAsc)
+    //         return a[sortBy] > b[sortBy] ? 1 : -1
+    //     else 
+    //         return a[sortBy] > b[sortBy] ? -1 : 1
+    // }
 
-    function determineSort(a, b, sortAsc) {
-        if (sortAsc)
-            return a[sortBy] > b[sortBy] ? 1 : -1
-        else 
-            return a[sortBy] > b[sortBy] ? -1 : 1
-    }
-
-    function determineFilter(player, activeFilters) {
-        const [showSubs, noGamesPlayed] = filterOptions;
-        if(!activeFilters.has(showSubs.id) && player.isSub)
-            return false;
-        if(!activeFilters.has(noGamesPlayed.id) && !player.games)
-            return false
-        return true;
-    }
+    // function determineFilter(player, activeFilters) {
+    //     const [showSubs, noGamesPlayed] = filterOptions;
+    //     if(!activeFilters.has(showSubs.id) && player.isSub)
+    //         return false;
+    //     if(!activeFilters.has(noGamesPlayed.id) && !player.games)
+    //         return false
+    //     return true;
+    // }
 
     useEffect(() => {
         const func = async () => {
