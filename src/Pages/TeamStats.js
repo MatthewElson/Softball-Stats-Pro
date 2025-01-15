@@ -5,26 +5,26 @@ import { doc, getDoc, getDocs, collection } from "firebase/firestore";
 import Globals from '../Globals';
 import NavBar from '../Components/NavBar';
 import Container from 'react-bootstrap/Container';
-import Table from 'react-bootstrap/Table';
+// import Table from 'react-bootstrap/Table';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Form from 'react-bootstrap/Form';
 import SplitButton from 'react-bootstrap/SplitButton';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Tooltip from 'react-bootstrap/Tooltip';
+// import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+// import Tooltip from 'react-bootstrap/Tooltip';
 
 const TeamStats = () => {
 
     const { teamName } = useParams();
-    const [players, setPlayers] = useState({});
+    // const [players, setPlayers] = useState({});
     const [loading, setLoading] = useState(true);
     const [view, setView] = useState('oneTableRadio');
     const [activeFilters, setActiveFilters] = useState(() => new Set());
     const [sortBy, setSortBy] = useState('name');
     const [sortAsc, setSortAsc] = useState(true);
-    const [showToolTip, setShowToolTip] = useState('');
+    // const [showToolTip, setShowToolTip] = useState('');
     /*
     Season year
     Game #
@@ -134,7 +134,7 @@ const TeamStats = () => {
                 // doc.data() is never undefined for query doc snapshots
                 console.log(doc.id, " => ", doc.data());
               });
-            setPlayers(docSnap.data().players.sort());
+            // setPlayers(docSnap.data().players.sort());
             setLoading(false);
 
         }

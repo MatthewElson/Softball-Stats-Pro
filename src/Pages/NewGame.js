@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 import { db } from "../firebase";
-import { doc, updateDoc, getDoc, arrayUnion, writeBatch} from "firebase/firestore";
+import { doc, getDoc, arrayUnion, writeBatch} from "firebase/firestore";
 // import CloseButton from 'react-bootstrap/CloseButton';
 import Button from 'react-bootstrap/Button';
 import NavBar from '../Components/NavBar';

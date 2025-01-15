@@ -14,7 +14,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 const LoginPage = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [teamName, setTeamName] = useState("");
-    const [guessedPassword, setGuessedPassword] = useState("");
+    // const [guessedPassword, setGuessedPassword] = useState("");
 
     const navigate = useNavigate();
 
