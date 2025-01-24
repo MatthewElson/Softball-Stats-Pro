@@ -1,89 +1,41 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { db } from "../firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, getDocs, collection } from "firebase/firestore";
+import Globals from '../Globals';
 import NavBar from '../Components/NavBar';
 import Container from 'react-bootstrap/Container';
-import Table from 'react-bootstrap/Table';
+// import Table from 'react-bootstrap/Table';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Form from 'react-bootstrap/Form';
 import SplitButton from 'react-bootstrap/SplitButton';
+// import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+// import Tooltip from 'react-bootstrap/Tooltip';
 
 const TeamStats = () => {
 
     const { teamName } = useParams();
-    const [players, setPlayers] = useState({});
+    // const [players, setPlayers] = useState({});
     const [loading, setLoading] = useState(true);
     const [view, setView] = useState('oneTableRadio');
     const [activeFilters, setActiveFilters] = useState(() => new Set());
     const [sortBy, setSortBy] = useState('name');
     const [sortAsc, setSortAsc] = useState(true);
-    const statNames = [                                        
-        {
-            id: 'name',
-            fullName: 'Player Name',
-            stat: 'Player',
-        },
-        {
-            id: 'games',
-            fullName: 'Games',
-            stat: 'G',
-        },
-        {
-            id: 'atBat',
-            fullName: 'Times At Bat',
-            stat: 'AB',
-        },
-        {
-            id: 'firstBase',
-            fullName: '1st Base',
-            stat: '1B',
-        },
-        {
-            id: 'secondBase',
-            fullName: '2nd Base',
-            stat: '2B',
-        },
-        {
-            id: 'thirdBase',
-            fullName: '3rd Base',
-            stat: '3B',
-        },
-        {
-            id: 'homeRun',
-            fullName: 'Home Run',
-            stat: 'HR',
-        },
-        {
-            id: 'rbis',
-            fullName: 'RBIs',
-            stat: 'RBI',
-        },
-        {
-            id: 'strikeOut',
-            fullName: 'Strikeouts',
-            stat: 'K',
-        },
-        {
-            id: 'averageBats',
-            fullName: 'Average',
-            stat: 'AVG',
-        }
-    ]
-
-    const addItem = item => {
-        setActiveFilters(prev => new Set(prev).add(item));
-    }
-    const removeItem = item => {
-        setActiveFilters(prev => {
-            const next = new Set(prev);
-            next.delete(item);
-            return next;
-        });
-    }
+    // const [showToolTip, setShowToolTip] = useState('');
+    /*
+    Season year
+    Game #
+    Team name
+    Win/Loss
+    Our Score
+    Their Score
+    Playoff Game
+    Practice Game
+    Lineup?
+    */
 
     const viewOptions = [
         {
@@ -100,52 +52,42 @@ const TeamStats = () => {
 
     const filterOptions = [
         {
-            id: 'showSubsCheckbox',
-            label: "Show Subs",
-            nameField: "showSubs",
+            id: 'winsCheckbox',
+            label: "Wins",
+            nameField: "victory",
         },
         {
-            id:'noGamesPlayedCheckbox',
-            label:"Show 0 Games Played",
-            nameField:"noGamesPlayed",
+            id:'playOffCheckbox',
+            label:"Playoff Games",
+            nameField:"playoffGames",
+        },
+        {
+            id:'practiceCheckbox',
+            label:"Practice Games",
+            nameField:"practiceGames",
         }
     ];
 
     const sortOptions = [
         {
-            id: 'playerNameRadio',
-            label: "Player Name",
-            stat:'name'
+            id: 'gameNumberRadio',
+            label: "Game Number",
+            stat:'id'
         },
         {
-            id: 'singlesRadio',
-            label: "Singles",
-            stat:'singles'
+            id: 'teamNameRadio',
+            label: "Name",
+            stat:'them'
         },
         {
-            id: 'doublesRadio',
-            label: "Doubles",
-            stat:'doubles'
+            id: 'ourScoreRadio',
+            label: "Our Score",
+            stat:'ourScore'
         },
         {
-            id: 'triplesRadio',
-            label: "Triples",
-            stat:'triples'
-        },
-        {
-            id: 'homerunsRadio',
-            label: "Homeruns",
-            stat:'homeruns'
-        },
-        {
-            id: 'battingAverageRadio',
-            label: "Batting Average",
-            stat:'avg'
-        },
-        {
-            id: 'rbisRadio',
-            label: "RBIs",
-            stat:'rbis'
+            id: 'theirScoreRadio',
+            label: "Their Score",
+            stat:'theirScore'
         },
     ];
 
@@ -164,39 +106,47 @@ const TeamStats = () => {
         )
     }
 
-    function determineSort(a, b, sortAsc){
-        if (sortAsc)
-            return a[sortBy] > b[sortBy] ? 1 : -1
-        else 
-            return a[sortBy] > b[sortBy] ? -1 : 1
-    }
+    // function determineSort(a, b, sortAsc) {
+    //     if (sortAsc)
+    //         return a[sortBy] > b[sortBy] ? 1 : -1
+    //     else 
+    //         return a[sortBy] > b[sortBy] ? -1 : 1
+    // }
 
-    function determineFilter(player, activeFilters){
-        const [showSubs, noGamesPlayed] = filterOptions;
-        if(!activeFilters.has(showSubs.id) && player.isSub)
-            return false;
-        if(!activeFilters.has(noGamesPlayed.id) && !player.games)
-            return false
-        return true;
-    }
+    // function determineFilter(player, activeFilters) {
+    //     const [showSubs, noGamesPlayed] = filterOptions;
+    //     if(!activeFilters.has(showSubs.id) && player.isSub)
+    //         return false;
+    //     if(!activeFilters.has(noGamesPlayed.id) && !player.games)
+    //         return false
+    //     return true;
+    // }
 
     useEffect(() => {
         const func = async () => {
-            const docRef = doc(db, "teams", teamName);
+            const docRef = doc(db, "teams", teamName,);
             const docSnap = await getDoc(docRef);
-            setPlayers(docSnap.data().players.sort());
+            console.log('docSnap.data() :', docSnap.data());
+            const userCartsCollectionRef = collection(db, 'teams', teamName, 'allSeasons');
+            const querySnapshot = await getDocs(userCartsCollectionRef);
+            querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+              });
+            // setPlayers(docSnap.data().players.sort());
             setLoading(false);
+
         }
 
         func();
     }, [teamName]);
-
+    
     return (
         <>
             <NavBar teamName={teamName}/>
             <Container className='mx-0'>
                 {loading
-                    ? (<Row><Col><h1 className="loading">Loading Stats...</h1></Col></Row>) 
+                    ? (<Row><Col><h1 className="loading">Loading Team Stats...</h1></Col></Row>) 
                     : (
                     <>
                     <Row className='mb-2'>
@@ -227,7 +177,7 @@ const TeamStats = () => {
                                                 id={element.id}
                                                 checked={activeFilters.has(element.id)}
                                                 key={element.id.replace(" ", "_") + idx}
-                                                onChange={ e => e.currentTarget.checked ? addItem(element.id) : removeItem(element.id) }
+                                                onChange={ e => e.currentTarget.checked ? Globals.addItem(element.id, setActiveFilters) : Globals.removeItem(element.id, setActiveFilters) }
                                             />
                                         )}
                                     </Form>
@@ -237,7 +187,7 @@ const TeamStats = () => {
                                     title={showSortSVG(sortAsc)}
                                     as={ButtonGroup} 
                                     variant={'primary'} 
-                                    className='w-100 whiteBorder directChildp-1'
+                                    className='w-100 whiteBorder directChild'
                                     autoClose='outside'
                                     onClick={() => setSortAsc((prev => !prev))}
                                 >
@@ -259,89 +209,12 @@ const TeamStats = () => {
                             </ButtonGroup>
                         </Col>
                     </Row>
-                    {view === 'oneTableRadio' ? (
-                        <Row><Col>
-                            <Table striped bordered hover responsive size="sm">
-                                <thead>
-                                    <tr>
-                                        {statNames.map(stat => <th key={stat.id}>{stat.stat}</th> )}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {players.sort((a,b) => determineSort(a,b, sortAsc))
-                                    .filter(player => determineFilter(player, activeFilters)).map((player, idx) => (
-                                        <tr key={"stats_" + idx}>
-                                            <td>{player.name}</td>
-                                            <td>{player.games}</td>
-                                            <td>{player.singles + player.doubles + player.triples + player.homeruns + player.strikeouts + player.outs}</td>
-                                            <td>{player.singles}</td>
-                                            <td>{player.doubles}</td>
-                                            <td>{player.triples}</td>
-                                            <td>{player.homeruns}</td>
-                                            <td>{player.rbis}</td>
-                                            <td>{player.strikeouts}</td>
-                                            <td>{((player.singles + player.doubles + player.triples + player.homeruns) / (player.singles + player.doubles + player.triples + player.homeruns + player.strikeouts + player.outs)).toFixed(2)}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </Table>
-                        </Col></Row>
-                    ) : (
-                        <Row><Col>
-                            <Table striped bordered hover responsive size="sm">
-                                <thead>
-                                    <tr>
-                                        <th>Player</th>
-                                        <th>G</th>
-                                        <th>AB</th>
-                                        <th>1B</th>
-                                        <th>2B</th>
-                                        <th>3B</th>
-                                        <th>HR</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                {players.sort((a,b) => determineSort(a,b, sortAsc))
-                                    .filter(player => determineFilter(player, activeFilters)).map((pl, idx) => (
-                                        <tr key={idx + 'T1'}>
-                                            <td>{pl.name}</td>
-                                            <td>{pl.games}</td>
-                                            <td>{pl.singles + pl.doubles + pl.triples + pl.homeruns + pl.strikeouts + pl.outs}</td>
-                                            <td>{pl.singles}</td>
-                                            <td>{pl.doubles}</td>
-                                            <td>{pl.triples}</td>
-                                            <td>{pl.homeruns}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </Table>
-                            <Table striped bordered hover responsive size="sm">
-                                <thead>
-                                    <tr>
-                                        <th>Player</th>
-                                        <th>G</th>
-                                        <th>AB</th>
-                                        <th>RBI</th>
-                                        <th>K</th>
-                                        <th>AVG</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                {players.sort((a,b) => determineSort(a,b, sortAsc))
-                                    .filter(player => determineFilter(player, activeFilters)).map((pl, idx) => (
-                                        <tr key={idx + 'T2'}>
-                                            <td>{pl.name}</td>
-                                            <td>{pl.games}</td>
-                                            <td>{pl.singles + pl.doubles + pl.triples + pl.homeruns + pl.strikeouts + pl.outs}</td>
-                                            <td>{pl.rbis}</td>
-                                            <td>{pl.strikeouts}</td>
-                                            <td>{((pl.singles + pl.doubles + pl.triples + pl.homeruns) / (pl.singles + pl.doubles + pl.triples + pl.homeruns + pl.strikeouts + pl.outs)).toFixed(2)}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </Table>
-                        </Col></Row>
-                    )}
+                    <Row><Col>
+                        {/* {seasonsInfo.map(season => {
+                            <h2>{season.year}</h2>
+
+                        })} */}
+                    </Col></Row>
                 </>  
                 )}
             </Container>

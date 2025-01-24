@@ -23,6 +23,7 @@ const ManageTeam = () => {
             const docRef = doc(db, "teams", teamName);
             const docSnap = await getDoc(docRef);
             setPlayers(docSnap.data().players.sort((a, b) => a.name > b.name ? 1 : -1));
+            sessionStorage.removeItem(teamName + 'Data');
         }
         func();
     }, [teamName]);

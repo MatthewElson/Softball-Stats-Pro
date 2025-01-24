@@ -32,6 +32,10 @@ body {
 	overflow-y: auto;
 }
 
+.underlineTableHeader{
+    text-decoration: underline;
+}
+
 .hidden {
     display: none !important;
 }
@@ -290,7 +294,7 @@ body {
     border: 1px solid #FFF;
 }
 
-.directChildp-1 > button {
+.directChild > button {
     padding: 0.25rem !important;
 }
 

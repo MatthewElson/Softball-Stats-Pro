@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 import { db } from "../firebase";
-import { doc, updateDoc, getDoc} from "firebase/firestore";
+import { doc, getDoc, arrayUnion, writeBatch} from "firebase/firestore";
 // import CloseButton from 'react-bootstrap/CloseButton';
 import Button from 'react-bootstrap/Button';
 import NavBar from '../Components/NavBar';
@@ -29,28 +29,55 @@ const NewGame = () => {
     const badButtons = ["Out", "Strikeout"];
     const [data, setData] = useState({});
     const [loading, setLoading] = useState(true);
+    const [gameType, setGameType] = useState('');
     const [allPlayers, setAllPlayers] = useState();
     const [lineupCards, setLineupCards] = useState([]);
     const [ourScore, setOurScore] = useState(0);
     const [theirScore, setTheirScore] = useState(0);
-
+    const [opponentTeamName, setOpponentTeamName] = useState("");
+    const [saveGameResult, setSaveGameResult] = useState({
+        show: false,
+        success: false,
+        message: ''
+    });
 
     useEffect(() => {
         const func = async () => {
-            const docRef = doc(db, "teams", teamName);
-            const docSnap = await getDoc(docRef);
-            setData(docSnap.data());
-            const playerData = docSnap.data().players;
+            //check the cache
+            let teamDataJSON = sessionStorage.getItem(teamName + 'Data');
+            let docRef = null;
+            let docSnap = null;
+            let teamPlayersInfo = null;
+            if(!teamDataJSON){
+                //get data from database
+                docRef = doc(db, "teams", teamName);
+                docSnap = await getDoc(docRef);
+                const dbInfo = docSnap.data();
+                //cache it so we don't have to keep making calls to the db
+                teamPlayersInfo = {
+                    teamInfo: dbInfo,
+                    dateCreated: Date.now(),
+                }
+                sessionStorage.setItem(teamName + 'Data', JSON.stringify(teamPlayersInfo));
+            }
+            
+            if(teamDataJSON)
+                teamPlayersInfo = JSON.parse(teamDataJSON);
+            
+            setData(teamPlayersInfo);
+            const playerData = teamPlayersInfo.teamInfo.players;
             setAllPlayers(playerData);//.players.sort((a, b) => a.name > b.name ? 1 : -1));
             setLoading(false);
             const averagesNeeded = [];
             const gameStatsNeeded = [];
             const rbisNeeded = [];
-            for (let i = 0; i < playerData.length; i++) {
+            
+            playerData.forEach(() => {
                 averagesNeeded.push([0, 0]);   
                 gameStatsNeeded.push([]);
                 rbisNeeded.push(0);
-            }
+            });
+
             setAverage(averagesNeeded);
             setGameStats(gameStatsNeeded);
             setRbis(rbisNeeded);
@@ -129,27 +156,31 @@ const NewGame = () => {
         e.preventDefault();
         
         try {
-            if (data.secret === secret) {
-                
-                for (const player of players) {
-                    const idx = players.indexOf(player);
-                    
-                    const docRef = doc(db, "teams", teamName);
-                    const docSnap = await getDoc(docRef);
-                    const teamPlayers = docSnap.data().players;
+            if (data.teamInfo.secret === secret) {
+                // get current players information
+                const docRef = doc(db, "teams", teamName);
+                const docSnap = await getDoc(docRef);
+                const teamPlayers = docSnap.data().players;
+                const batch = writeBatch(db);
 
-                    const updatedPlayers = teamPlayers.map((plyr) => {
+                for (const player of players) {
+                    const updatedPlayers = teamPlayers.map((tempPlayer) => {
+                        const battingAverage = Globals.calculateAverage(tempPlayer);
+                        if(!battingAverage)
+                            return tempPlayer;
+
                         const prevStats = {
-                            singles: plyr.singles,
-                            doubles: plyr.doubles,
-                            triples: plyr.triples,
-                            homeruns: plyr.homeruns,
-                            outs: plyr.outs,
-                            strikeouts: plyr.strikeouts,
-                            rbis: plyr.rbis,
-                            games: plyr.games,
+                            singles: player.singles,
+                            doubles: player.doubles,
+                            triples: player.triples,
+                            homeruns: player.homeruns,
+                            outs: player.outs,
+                            strikeouts: player.strikeouts,
+                            rbis: player.rbis,
+                            games: player.games,
                         };
-                        if (player.name === plyr.name) {
+                        if (lineupCards.some(card => card.name === player.name)) {
+                            const idx = players.map(e => e.name).indexOf(player.name);
                             gameStats[idx].forEach((type) => {
                                 if (type === "Single") {
                                     prevStats.singles += 1;
@@ -169,20 +200,53 @@ const NewGame = () => {
                             if (gameStats[idx].length > 0){
                                 prevStats.games += 1;
                             }
-                            return { ...plyr, ...prevStats };
+                            return { ...player, ...prevStats };
                         }
-                        return plyr;
+                        return player;
                     });
-                    await updateDoc(docRef, { players: updatedPlayers });
+                    batch.update(docRef, { players: updatedPlayers });
                 }
-                alert("Stats have been successfully added");
-                Globals.toggleCB(setPopupToggle);
+
+                const currentYear = new Date().getFullYear();
+                let outcome = 1;
+                if(ourScore > theirScore) 
+                    outcome = 2;
+                else if (ourScore < theirScore)
+                    outcome = 0;
+                
+                const sessionRef = doc(db, "teams", teamName, "allSeasons", currentYear.toString());
+                batch.update(sessionRef, { games: arrayUnion({
+                    battingOrder: players.map(person => person.name),
+                    datePlayed: new Date(),
+                    isPlayoffs: gameType === "playoff",
+                    isPractice: gameType === "practice",
+                    opponentTeamName: opponentTeamName,
+                    ourScore: ourScore,
+                    outcome: outcome,
+                    theirScore: theirScore,
+                })});
+
+                await batch.commit();
+
+                setSaveGameResult({
+                    show: true,
+                    success: true,
+                    message: 'Stats have been successfully added'
+                });
             } else {
-                alert("Wrong team password");
+                setSaveGameResult({
+                    show: true,
+                    success: false,
+                    message: 'Wrong team password'
+                });
             }
             setSecret("");
         } catch (error) {
-           alert(`Error updating document: ${error}`);        
+            setSaveGameResult({
+                show: true,
+                success: false,
+                message: `Error updating document: ${error}`
+            });    
         }
     };
 
@@ -229,11 +293,11 @@ const NewGame = () => {
             {loading ? (<><h1 className="loading">Loading Game...</h1><NavBar teamName={teamName}/></>) : (
             <>
                 {lineupToggle && <EditLineup lineupToggle={lineupToggle} setLineupToggle={setLineupToggle} handleLineupForm={handleLineupForm} allPlayers={allPlayers} lineupCards={lineupCards} setLineupCards={setLineupCards} removePlayerFromFunctions={[setRbis, setGameStats, setAverage]} />}
-                {popupToggle && <SubmitStats popupToggle={popupToggle} setPopupToggle={setPopupToggle} setSecret={setSecret} handleSubmitStatsForm={handleSubmitStatsForm}/>}
+                {popupToggle && <SubmitStats popupToggle={popupToggle} setPopupToggle={setPopupToggle} setSecret={setSecret} setOpponentTeamName={setOpponentTeamName} handleSubmitStatsForm={handleSubmitStatsForm} setGameType={setGameType} saveGameResult={saveGameResult}/>}
                 <NavBar teamName={teamName}/>
                 <Container className={`${lineupToggle ? "blurred" : ""}`}>
                     <Row xs={12} className='mb-1'>
-                        <Col className='isInlineGrid'>  
+                        <Col className='isInlineGrid'>
                             <ButtonGroup>
                                 <Button onClick={() => Globals.toggleCB(setLineupToggle)} className={players.length < 3 ? 'w-100' : 'w-50 whiteBorder'}>Lineup</Button>
                                 { players.length >= 3 &&
@@ -351,8 +415,7 @@ const NewGame = () => {
                 </Container>
             </>)}
         </>
-    )
-    }
+    )}
     catch(e){
        console.error(e);
     }

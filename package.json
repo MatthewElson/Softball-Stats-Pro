@@ -1,5 +1,5 @@
 {
-  "name": "client",
+  "name": "softball-stats-pro",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -30,7 +30,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "databaseRules": "firebase hosting:channel:deploy  --only database",
+    "databaseRules": "firebase deploy --only firestore:rules",
     "dev": "firebase emulators:start --only hosting",
     "share": "firebase hosting:channel:deploy sharing"
   },
