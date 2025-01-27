@@ -23,8 +23,8 @@ const LoginPage = () => {
 
         const colRef = collection(db, "teams")
         const teams = [];
-        getDocs(colRef)
-            .then((snapshot) => {
+        const snapshot = await getDocs(colRef)
+            // .then((snapshot) => {
                 console.log('snapshot.docs :', snapshot.docs);
                 snapshot.docs.forEach(doc => {
                     teams.push({ ...doc.data(), id: doc.id});
@@ -45,10 +45,10 @@ const LoginPage = () => {
                 if(isLoading){
                     
                 }
-            })
-            .catch(err => {
-                console.log(err.message);
-            })
+            // })
+            // .catch(err => {
+            //     console.log(err.message);
+            // })
     }
 
     return (
